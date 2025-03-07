@@ -1,0 +1,331 @@
+{% extends 'base.html' %} {% block title %}Race Details - F1 Pulse{% endblock %}
+{% block content %}
+<div class="race-detail-page">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/races">Races</a></li>
+      <li class="breadcrumb-item active" id="race-name-breadcrumb">
+        Race Details
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Race not found alert -->
+  <div class="alert alert-warning d-none" id="race-not-found">
+    <h4 class="alert-heading">Race Not Found</h4>
+    <p>Sorry, we couldn't find information for this race.</p>
+    <a href="/races" class="btn btn-primary">Back to Races</a>
+  </div>
+
+  <!-- Loading indicator -->
+  <div class="text-center mb-4" id="race-loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading race information...</span>
+    </div>
+    <p class="mt-2">Loading race information...</p>
+  </div>
+
+  <!-- Error alert -->
+  <div class="alert alert-danger d-none" id="race-error">
+    <h4 class="alert-heading">Error Loading Race Data</h4>
+    <p>Sorry, we encountered an error while loading race information.</p>
+    <a href="/races" class="btn btn-primary">Back to Races</a>
+  </div>
+
+  <!-- Race content (hidden until loaded) -->
+  <div class="race-content d-none" id="race-content">
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h1 id="race-title" class="display-5 fw-bold mb-3"></h1>
+        <div class="d-flex align-items-center mb-3">
+          <div class="badge bg-primary me-2">
+            Round <span id="race-round"></span>
+          </div>
+          <div class="badge bg-secondary me-2">
+            Season <span id="race-season"></span>
+          </div>
+          <div id="race-status-badge" class="badge bg-success">Upcoming</div>
+        </div>
+        <p class="lead" id="race-date"></p>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Circuit Information</h5>
+            <p class="card-text" id="circuit-name"></p>
+            <p class="card-text" id="circuit-location"></p>
+            <a href="#" id="circuit-link" class="btn btn-sm btn-outline-primary"
+              >Circuit Details</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Race Results -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Race Results</h2>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Pos</th>
+                <th>Driver</th>
+                <th>Team</th>
+                <th>Grid</th>
+                <th>Status</th>
+                <th>Points</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody id="results-tbody">
+              <!-- Will be populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Race Information -->
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Race Weekend Schedule</h3>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush" id="race-schedule">
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                id="fp1-item"
+              >
+                <span>Practice 1</span>
+                <span
+                  id="fp1-date"
+                  class="badge bg-primary rounded-pill"
+                ></span>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                id="fp2-item"
+              >
+                <span>Practice 2</span>
+                <span
+                  id="fp2-date"
+                  class="badge bg-primary rounded-pill"
+                ></span>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                id="fp3-item"
+              >
+                <span>Practice 3</span>
+                <span
+                  id="fp3-date"
+                  class="badge bg-primary rounded-pill"
+                ></span>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                id="qualifying-item"
+              >
+                <span>Qualifying</span>
+                <span
+                  id="qualifying-date"
+                  class="badge bg-primary rounded-pill"
+                ></span>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                id="sprint-item"
+              >
+                <span>Sprint</span>
+                <span
+                  id="sprint-date"
+                  class="badge bg-primary rounded-pill"
+                ></span>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                id="race-item"
+              >
+                <span>Race</span>
+                <span
+                  id="main-race-date"
+                  class="badge bg-danger rounded-pill"
+                ></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Race Highlights</h3>
+          </div>
+          <div class="card-body">
+            <p>
+              Race highlights will be available after the race is completed.
+            </p>
+            <!-- Placeholder for race highlights or statistics -->
+            <div id="race-highlights">
+              <div class="placeholder-glow">
+                <p class="placeholder col-12"></p>
+                <p class="placeholder col-10"></p>
+                <p class="placeholder col-8"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const season = "{{ season }}";
+    const round = "{{ round_num }}";
+
+    // Elements
+    const raceLoading = document.getElementById("race-loading");
+    const raceContent = document.getElementById("race-content");
+    const raceNotFound = document.getElementById("race-not-found");
+    const raceError = document.getElementById("race-error");
+
+    // Fetch race data
+    fetch(`/api/race-results/${season}/${round}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Race not found");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Update race information
+        document.getElementById("race-title").textContent = data.race.name;
+        document.getElementById("race-name-breadcrumb").textContent =
+          data.race.name;
+        document.getElementById("race-round").textContent = data.race.round;
+        document.getElementById("race-season").textContent = data.race.season;
+
+        // Format and display race date
+        if (data.race.date) {
+          const raceDate = new Date(data.race.date);
+          document.getElementById("race-date").textContent =
+            raceDate.toLocaleDateString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+
+          // Set race status based on date
+          const today = new Date();
+          const statusBadge = document.getElementById("race-status-badge");
+
+          if (raceDate < today) {
+            statusBadge.textContent = "Completed";
+            statusBadge.className = "badge bg-secondary";
+          } else if (raceDate.toDateString() === today.toDateString()) {
+            statusBadge.textContent = "Today";
+            statusBadge.className = "badge bg-danger";
+          } else {
+            statusBadge.textContent = "Upcoming";
+            statusBadge.className = "badge bg-success";
+          }
+
+          // Set main race date in schedule
+          document.getElementById("main-race-date").textContent =
+            raceDate.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+        }
+
+        // Update circuit information
+        if (data.race.circuit_name) {
+          document.getElementById("circuit-name").textContent =
+            data.race.circuit_name;
+          document.getElementById("circuit-link").href = `/circuit/${
+            data.race.circuit_id || "unknown"
+          }`;
+        }
+
+        if (data.race.circuit_country) {
+          document.getElementById("circuit-location").textContent =
+            data.race.circuit_country;
+        }
+
+        // Populate results table
+        const resultsBody = document.getElementById("results-tbody");
+        resultsBody.innerHTML = ""; // Clear existing content
+
+        if (data.results && data.results.length > 0) {
+          data.results.forEach((result) => {
+            const row = document.createElement("tr");
+
+            // Highlight podium positions
+            if (result.position <= 3) {
+              row.className = "table-success";
+            }
+
+            row.innerHTML = `
+                          <td>${result.position}</td>
+                          <td>
+                              <a href="/driver/${result.driver_id}">${
+              result.driver_name
+            }</a>
+                          </td>
+                          <td>
+                              <a href="/team/${result.constructor_id}">${
+              result.team_name
+            }</a>
+                          </td>
+                          <td>${result.grid}</td>
+                          <td>${result.status}</td>
+                          <td>${result.points}</td>
+                          <td>${result.time || "-"}</td>
+                      `;
+
+            resultsBody.appendChild(row);
+          });
+        } else {
+          // If no results, show message
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                      <td colspan="7" class="text-center">
+                          Results will be available after the race is completed.
+                      </td>
+                  `;
+          resultsBody.appendChild(row);
+        }
+
+        // Show content, hide loading
+        raceLoading.classList.add("d-none");
+        raceContent.classList.remove("d-none");
+      })
+      .catch((error) => {
+        console.error("Error fetching race data:", error);
+
+        if (error.message === "Race not found") {
+          // Show not found message
+          raceLoading.classList.add("d-none");
+          raceNotFound.classList.remove("d-none");
+        } else {
+          // Show error message
+          raceLoading.classList.add("d-none");
+          raceError.classList.remove("d-none");
+        }
+      });
+  });
+</script>
+{% endblock %}

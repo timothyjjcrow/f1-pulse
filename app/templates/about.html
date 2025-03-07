@@ -1,0 +1,227 @@
+{% extends 'base.html' %} {% block title %}About F1 Pulse - Real-time Formula 1
+Updates{% endblock %} {% block content %}
+<div class="about-page">
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold">About F1 Pulse</h1>
+    <p class="lead">
+      Delivering the pulse of Formula 1 to fans around the world
+    </p>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-lg-6 mb-4 mb-lg-0">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="card-title mb-4">Our Mission</h2>
+          <p>
+            F1 Pulse was created with a simple mission: to provide Formula 1
+            fans with the most comprehensive, real-time updates and insights
+            into the sport they love.
+          </p>
+          <p>
+            We believe that following Formula 1 should be as exciting and
+            engaging as the races themselves. That's why we've developed a
+            platform that combines accurate data, beautiful visualizations, and
+            interactive features to enhance your F1 experience.
+          </p>
+          <p>
+            Whether you're tracking live race updates, exploring detailed driver
+            statistics, or challenging yourself with our Pit Stop Strategy
+            simulator, F1 Pulse aims to deepen your connection to the thrilling
+            world of Formula 1.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="card-title mb-4">How We Started</h2>
+          <p>
+            F1 Pulse began as a passion project in early 2024, when a team of
+            Formula 1 enthusiasts with backgrounds in web development decided to
+            create the F1 platform they always wanted but couldn't find.
+          </p>
+          <p>
+            Frustrated by scattered information, delayed updates, and clunky
+            interfaces on existing platforms, we set out to build something
+            better—a one-stop destination that would satisfy both casual viewers
+            and die-hard fans.
+          </p>
+          <p>
+            After months of development and testing, F1 Pulse was launched just
+            in time for the 2024 season, promising to revolutionize how fans
+            engage with Formula 1.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-5">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Key Features</h2>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="feature-item text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-tachometer-alt fa-3x text-primary"></i>
+            </div>
+            <h3>Live Race Tracker</h3>
+            <p>
+              Get real-time lap times, positions, and incident updates during
+              races. Stay informed with our countdown to the next Grand Prix.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-item text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-users fa-3x text-primary"></i>
+            </div>
+            <h3>Driver & Team Profiles</h3>
+            <p>
+              Detailed statistics and profiles for all F1 drivers and teams,
+              including career wins, points, and current standings.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-item text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-map-marked-alt fa-3x text-primary"></i>
+            </div>
+            <h3>Interactive Track Maps</h3>
+            <p>
+              Explore circuit layouts with lap records and key overtaking spots.
+              Learn about each track's unique characteristics.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-item text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-history fa-3x text-primary"></i>
+            </div>
+            <h3>Historical Data</h3>
+            <p>
+              Access past race results, championship winners, and notable
+              records, providing a comprehensive view of F1's rich history.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-item text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-chart-line fa-3x text-primary"></i>
+            </div>
+            <h3>Championship Standings</h3>
+            <p>
+              Follow the latest driver and constructor championship standings
+              with intuitive visualizations and trend indicators.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-item text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-stopwatch fa-3x text-primary"></i>
+            </div>
+            <h3>Virtual Pit Stop Challenge</h3>
+            <p>
+              Test your strategic skills with our interactive pit stop
+              simulator. Learn about tire choices and timing strategies.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-5">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Our Data Sources</h2>
+    </div>
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <p>
+            F1 Pulse combines data from multiple reliable sources to ensure the
+            most accurate and comprehensive Formula 1 information:
+          </p>
+          <ul>
+            <li>
+              <strong>Ergast Developer API</strong> - Our primary source for
+              race results, driver and constructor standings, and historical
+              data
+            </li>
+            <li>
+              <strong>Official F1 Media</strong> - For the latest news,
+              announcements, and race previews
+            </li>
+            <li>
+              <strong>Team Press Releases</strong> - Direct information from F1
+              teams about their drivers, cars, and strategies
+            </li>
+          </ul>
+          <p>
+            All data is regularly synchronized to provide real-time updates
+            during race weekends and throughout the season.
+          </p>
+        </div>
+        <div class="col-md-6 text-center">
+          <img
+            src="{{ url_for('static', filename='images/data-source.svg') }}"
+            alt="Data Sources"
+            class="img-fluid"
+            style="max-width: 400px"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-5">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Legal Information</h2>
+    </div>
+    <div class="card-body">
+      <p>
+        F1 Pulse is not affiliated with Formula 1, FIA, or any Formula 1 team.
+        It is a fan-made project created for educational and entertainment
+        purposes only.
+      </p>
+      <p>
+        Formula 1, F1, and all associated logos and marks are trademarks of
+        Formula One Licensing BV.
+      </p>
+      <p>
+        All team and driver images are used with permission or under fair use
+        guidelines. Team logos and names are the property of their respective
+        owners.
+      </p>
+      <p>
+        The data displayed on F1 Pulse is sourced from the Ergast Developer API
+        and other public sources.
+      </p>
+    </div>
+  </div>
+
+  <div class="contact-section text-center mb-5">
+    <h2 class="mb-4">Contact Us</h2>
+    <p>Have questions, suggestions, or feedback? We'd love to hear from you!</p>
+    <p>
+      <strong>Email:</strong>
+      <a href="mailto:contact@f1pulse.com">contact@f1pulse.com</a>
+    </p>
+    <div class="social-links mt-3">
+      <a href="#" class="me-3"><i class="fab fa-twitter fa-2x"></i></a>
+      <a href="#" class="me-3"><i class="fab fa-facebook fa-2x"></i></a>
+      <a href="#" class="me-3"><i class="fab fa-instagram fa-2x"></i></a>
+      <a href="#"><i class="fab fa-youtube fa-2x"></i></a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,570 @@
+{% extends 'base.html' %} {% block title %}Team Profile - F1 Pulse{% endblock %}
+{% block content %}
+<div class="team-detail-page">
+  <div class="loading-container text-center py-5" id="team-loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading team information...</p>
+  </div>
+
+  <div class="alert alert-warning d-none" id="team-not-found">
+    <h4 class="alert-heading">Team Not Found</h4>
+    <p>Sorry, we couldn't find information for the requested team.</p>
+    <a href="{{ url_for('main.teams') }}" class="btn btn-primary"
+      >Back to Teams</a
+    >
+  </div>
+
+  <div class="alert alert-danger d-none" id="team-error">
+    <h4 class="alert-heading">Error Loading Team Data</h4>
+    <p>Sorry, we encountered an error while loading team information.</p>
+    <a href="{{ url_for('main.teams') }}" class="btn btn-primary"
+      >Back to Teams</a
+    >
+  </div>
+
+  <div class="team-content d-none" id="team-content">
+    <div class="mb-4 team-header">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('main.index') }}">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('main.teams') }}">Teams</a>
+          </li>
+          <li
+            class="breadcrumb-item active"
+            aria-current="page"
+            id="team-breadcrumb"
+          >
+            Team Profile
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-md-4 mb-4 mb-md-0">
+        <div class="card team-profile-card h-100">
+          <div
+            class="card-header text-white"
+            id="team-header"
+            style="background-color: #dc0000"
+          >
+            <h2 class="card-title mb-0 text-center" id="team-name">
+              Team Name
+            </h2>
+          </div>
+          <div class="text-center p-4">
+            <img
+              src="{{ url_for('static', filename='images/team-logo-placeholder.png') }}"
+              alt="Team Logo"
+              id="team-logo"
+              class="img-fluid mb-3"
+              style="max-height: 150px"
+            />
+            <h3 class="text-muted" id="team-full-name">Full Team Name</h3>
+          </div>
+          <div class="card-body">
+            <div class="team-info">
+              <ul class="list-group list-group-flush">
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Team Principal:</span>
+                  <span id="team-principal" class="fw-bold"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Base:</span>
+                  <span id="team-base"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>First Entry:</span>
+                  <span id="team-first-entry"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Championships:</span>
+                  <span id="team-championships" class="fw-bold"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Race Wins:</span>
+                  <span id="team-wins" class="fw-bold"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Podiums:</span>
+                  <span id="team-podiums"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Pole Positions:</span>
+                  <span id="team-poles"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Fastest Laps:</span>
+                  <span id="team-fastest-laps"></span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a
+              href="#"
+              class="btn btn-outline-primary w-100"
+              id="team-website"
+              target="_blank"
+            >
+              <i class="fas fa-globe me-2"></i>Official Website
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Team Overview</h3>
+              </div>
+              <div class="card-body">
+                <p id="team-description" class="mb-0"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row my-4">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">2024 Season Performance</h3>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                      <div class="card-body text-center">
+                        <h4 class="card-title">Championship Standing</h4>
+                        <div class="position-indicator mb-3">
+                          <span
+                            class="display-1 fw-bold"
+                            id="team-position"
+                          ></span>
+                          <span class="text-muted">/ 10</span>
+                        </div>
+                        <p class="mb-0 fs-4" id="team-points"></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card h-100">
+                      <div class="card-body">
+                        <h4 class="card-title">Points Progression</h4>
+                        <div
+                          class="chart-container"
+                          style="position: relative; height: 200px"
+                        >
+                          <canvas id="teamPointsChart"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Current Drivers</h3>
+              </div>
+              <div class="card-body">
+                <div class="row" id="team-drivers">
+                  <!-- Will be populated via JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">2025 Car: <span id="car-name">TBC</span></h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-5 mb-4 mb-md-0">
+                <h4>Technical Specifications</h4>
+                <ul class="list-group">
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Power Unit:</span>
+                    <span id="power-unit"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Chassis:</span>
+                    <span id="chassis"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Front Wing:</span>
+                    <span id="front-wing"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>DRS:</span>
+                    <span id="drs"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Weight:</span>
+                    <span id="weight"></span>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-7 text-center">
+                <img
+                  src="{{ url_for('static', filename='images/car-placeholder.png') }}"
+                  alt="Team Car"
+                  class="img-fluid rounded"
+                  id="car-image"
+                />
+                <p class="text-muted mt-2">2025 Formula 1 car</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Team History</h3>
+          </div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-item-content">
+                  <span class="tag" style="background-color: var(--f1-red)"
+                    >Foundation</span
+                  >
+                  <time id="foundation-year">1950</time>
+                  <p id="foundation-story">
+                    Team was founded as a racing division.
+                  </p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-item-content">
+                  <span class="tag" style="background-color: var(--f1-red)"
+                    >First Win</span
+                  >
+                  <time id="first-win-year">1951</time>
+                  <p id="first-win-story">
+                    Team achieved its first race victory at the Italian Grand
+                    Prix.
+                  </p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-item-content">
+                  <span class="tag" style="background-color: var(--f1-red)"
+                    >First Championship</span
+                  >
+                  <time id="first-championship-year">1952</time>
+                  <p id="first-championship-story">
+                    Team claimed its first Constructor's Championship.
+                  </p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-item-content">
+                  <span class="tag" style="background-color: var(--f1-red)"
+                    >Modern Era</span
+                  >
+                  <time id="modern-era-year">2000</time>
+                  <p id="modern-era-story">
+                    Team entered a new phase of competition with innovative
+                    technologies.
+                  </p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-item-content">
+                  <span class="tag" style="background-color: var(--f1-red)"
+                    >Present Day</span
+                  >
+                  <time>2025</time>
+                  <p id="present-day-story">
+                    Team continues to compete at the highest level of
+                    motorsport.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media Links -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Connect with the Team</h3>
+          </div>
+          <div class="card-body text-center">
+            <div class="social-links">
+              <a href="#" class="btn btn-outline-dark mx-2"
+                ><i class="fab fa-twitter me-2"></i>Twitter</a
+              >
+              <a href="#" class="btn btn-outline-dark mx-2"
+                ><i class="fab fa-instagram me-2"></i>Instagram</a
+              >
+              <a href="#" class="btn btn-outline-dark mx-2"
+                ><i class="fab fa-facebook me-2"></i>Facebook</a
+              >
+              <a href="#" class="btn btn-outline-dark mx-2"
+                ><i class="fab fa-youtube me-2"></i>YouTube</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Helper function to safely update element content
+    function safelyUpdateElement(id, updateFn) {
+      const element = document.getElementById(id);
+      if (element) {
+        updateFn(element);
+      }
+    }
+
+    // Helper function to safely set text content
+    function safelySetText(id, text) {
+      safelyUpdateElement(id, (element) => {
+        element.textContent = text;
+      });
+    }
+
+    // Helper function to safely toggle visibility
+    function safelyToggleVisibility(showIds, hideIds) {
+      if (showIds && showIds.length) {
+        showIds.forEach((id) => {
+          safelyUpdateElement(id, (element) => {
+            element.classList.remove("d-none");
+          });
+        });
+      }
+
+      if (hideIds && hideIds.length) {
+        hideIds.forEach((id) => {
+          safelyUpdateElement(id, (element) => {
+            element.classList.add("d-none");
+          });
+        });
+      }
+    }
+
+    // Get constructor ID from URL path (not from query parameters)
+    const pathParts = window.location.pathname.split("/");
+    const constructorId = pathParts[pathParts.length - 1]; // Get the last part of the path
+
+    if (!constructorId) {
+      safelyToggleVisibility(["team-not-found"], ["team-loading"]);
+      return;
+    }
+
+    // Load team data from the API
+    fetch(`/api/team/${constructorId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const constructorData = data.MRData.ConstructorTable.Constructors[0];
+
+        if (!constructorData) {
+          safelyToggleVisibility(["team-not-found"], ["team-loading"]);
+          return;
+        }
+
+        // Fetch detailed team statistics from our database
+        fetch(`/api/team-stats/${constructorId}`)
+          .then((response) => response.json())
+          .then((teamStats) => {
+            try {
+              // Team name
+              safelySetText(
+                "team-name",
+                teamStats.team.full_name || constructorData.name
+              );
+
+              // Basic team information
+              safelySetText(
+                "team-principal",
+                teamStats.team.team_principal || "Unknown"
+              );
+              safelySetText(
+                "team-base",
+                teamStats.team.base_location || "Unknown"
+              );
+
+              // Team stats
+              safelySetText(
+                "team-first-entry",
+                teamStats.team.first_entry || "Unknown"
+              );
+              safelySetText(
+                "team-championships",
+                teamStats.team.championships || "0"
+              );
+              safelySetText("team-wins", teamStats.team.race_wins || "0");
+              safelySetText("team-podiums", teamStats.team.podiums || "0");
+              safelySetText("team-poles", teamStats.team.pole_positions || "0");
+              safelySetText(
+                "team-fastest-laps",
+                teamStats.team.fastest_laps || "0"
+              );
+
+              // Team car details
+              safelySetText(
+                "team-car-name",
+                teamStats.team.car_name || `${constructorData.name} 2024 Car`
+              );
+              safelySetText(
+                "team-power-unit",
+                teamStats.team.power_unit || "Unknown"
+              );
+
+              // Current position
+              safelySetText(
+                "team-position",
+                teamStats.current_season.position || "N/A"
+              );
+              safelySetText(
+                "team-points",
+                `${teamStats.current_season.points || "0"} points`
+              );
+
+              // Set the team color for design elements
+              const teamColor =
+                teamStats.team.color ||
+                "#" + Math.floor(Math.random() * 16777215).toString(16);
+              document.documentElement.style.setProperty(
+                "--team-color",
+                teamColor
+              );
+
+              // Team drivers - safely update
+              const driverContainer = document.getElementById("team-drivers");
+              if (driverContainer) {
+                driverContainer.innerHTML = "";
+
+                if (teamStats.drivers && teamStats.drivers.length > 0) {
+                  teamStats.drivers.forEach((driver) => {
+                    const driverCard = document.createElement("div");
+                    driverCard.className = "col-md-6 mb-4";
+                    driverCard.innerHTML = `
+                      <div class="card h-100 shadow-sm team-driver-card">
+                        <div class="card-body">
+                          <h5 class="card-title">${driver.name}</h5>
+                          <p class="card-text">
+                            #${driver.number} · ${driver.code}
+                          </p>
+                          <a href="/driver/${driver.driver_id}" class="btn btn-outline-primary">
+                            View Profile
+                          </a>
+                        </div>
+                      </div>
+                    `;
+                    driverContainer.appendChild(driverCard);
+                  });
+                } else {
+                  driverContainer.innerHTML = `
+                    <div class="col-12">
+                      <div class="alert alert-info">
+                        No driver information available for this team.
+                      </div>
+                    </div>
+                  `;
+                }
+              }
+
+              // Team history timeline - safely update
+              const foundationYear = teamStats.team.first_entry || "Unknown";
+              safelyUpdateElement("foundation-year", (element) => {
+                element.textContent = foundationYear;
+              });
+
+              // Safely update team description if it exists
+              if (teamStats.team.biography) {
+                safelyUpdateElement("team-description", (element) => {
+                  element.innerHTML = teamStats.team.biography;
+                });
+              } else {
+                // Generate a simple description
+                safelyUpdateElement("team-description", (element) => {
+                  element.innerHTML = `
+                    <p>${
+                      teamStats.team.full_name || constructorData.name
+                    } is a Formula 1 team that entered the championship in ${foundationYear}.</p>
+                    <p>The team has won ${
+                      teamStats.team.championships || "0"
+                    } World Championships and ${
+                    teamStats.team.race_wins || "0"
+                  } races.</p>
+                  `;
+                });
+              }
+
+              // Show content and hide loading
+              safelyToggleVisibility(["team-content"], ["team-loading"]);
+            } catch (error) {
+              console.error("Error processing team data:", error);
+              safelyToggleVisibility(["team-error"], ["team-loading"]);
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching team stats:", error);
+            safelyToggleVisibility(["team-error"], ["team-loading"]);
+          });
+      })
+      .catch((error) => {
+        console.error("Error fetching team info:", error);
+        safelyToggleVisibility(["team-error"], ["team-loading"]);
+      });
+  });
+</script>
+{% endblock %}

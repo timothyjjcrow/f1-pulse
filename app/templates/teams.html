@@ -1,0 +1,276 @@
+{% extends 'base.html' %} {% block title %}F1 Teams - F1 Pulse{% endblock %} {%
+block content %}
+<div class="teams-page">
+  <div class="text-center mb-4">
+    <h1 class="display-5 fw-bold">F1 Teams</h1>
+    <p class="lead">
+      Detailed profiles and statistics for all Formula 1 teams in the 2025
+      season
+    </p>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Constructor Standings</h2>
+    </div>
+    <div class="card-body" id="constructor-standings">
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading constructor standings...</p>
+      </div>
+      <div class="table-responsive d-none" id="standings-table-container">
+        <table class="table table-striped standings-table">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Team</th>
+              <th>Points</th>
+              <th>Wins</th>
+            </tr>
+          </thead>
+          <tbody id="standings-tbody">
+            <!-- Will be populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title mb-4">Team Profiles</h2>
+  <div class="row" id="team-profiles">
+    <div class="col-md-12 text-center">
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading team profiles...</p>
+      </div>
+    </div>
+    <!-- Will be populated via JavaScript -->
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Fetch constructor standings
+    fetch("/api/teams")
+      .then((response) => response.json())
+      .then((data) => {
+        const standingsContainer = document.getElementById(
+          "standings-table-container"
+        );
+        const loadingContainer = document.querySelector(
+          "#constructor-standings .loading-container"
+        );
+        const tbody = document.getElementById("standings-tbody");
+
+        const standingsData =
+          data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings ||
+          [];
+
+        if (standingsData.length > 0) {
+          standingsData.forEach((team) => {
+            const tr = document.createElement("tr");
+
+            tr.innerHTML = `
+                        <td class="position">${team.position}</td>
+                        <td>
+                            <a href="/team/${team.Constructor.constructorId}">
+                                ${team.Constructor.name}
+                            </a>
+                        </td>
+                        <td>${team.points}</td>
+                        <td>${team.wins}</td>
+                    `;
+
+            tbody.appendChild(tr);
+          });
+
+          // Hide loading, show table
+          loadingContainer.classList.add("d-none");
+          standingsContainer.classList.remove("d-none");
+        } else {
+          // If no data, show message
+          loadingContainer.innerHTML =
+            "<p>No constructor standings available at this time.</p>";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching constructor standings:", error);
+        const loadingContainer = document.querySelector(
+          "#constructor-standings .loading-container"
+        );
+        loadingContainer.innerHTML =
+          "<p>Error loading constructor standings. Please try again later.</p>";
+      });
+
+    // Create fake team profile cards for 2025 F1 grid
+    const teams = [
+      {
+        id: "red_bull",
+        name: "Red Bull Racing",
+        fullName: "Oracle Red Bull Racing",
+        base: "Milton Keynes, United Kingdom",
+        teamPrincipal: "Christian Horner",
+        firstEntry: 2005,
+        championships: 6,
+        primaryColor: "#0600EF",
+      },
+      {
+        id: "ferrari",
+        name: "Ferrari",
+        fullName: "Scuderia Ferrari",
+        base: "Maranello, Italy",
+        teamPrincipal: "Frédéric Vasseur",
+        firstEntry: 1950,
+        championships: 16,
+        primaryColor: "#DC0000",
+      },
+      {
+        id: "mercedes",
+        name: "Mercedes",
+        fullName: "Mercedes-AMG Petronas F1 Team",
+        base: "Brackley, United Kingdom",
+        teamPrincipal: "Toto Wolff",
+        firstEntry: 1954,
+        championships: 8,
+        primaryColor: "#00D2BE",
+      },
+      {
+        id: "mclaren",
+        name: "McLaren",
+        fullName: "McLaren F1 Team",
+        base: "Woking, United Kingdom",
+        teamPrincipal: "Andrea Stella",
+        firstEntry: 1966,
+        championships: 8,
+        primaryColor: "#FF8700",
+      },
+      {
+        id: "aston_martin",
+        name: "Aston Martin",
+        fullName: "Aston Martin Aramco F1 Team",
+        base: "Silverstone, United Kingdom",
+        teamPrincipal: "Andy Cowell",
+        firstEntry: 2021,
+        championships: 0,
+        primaryColor: "#006F62",
+      },
+      {
+        id: "alpine",
+        name: "Alpine",
+        fullName: "BWT Alpine F1 Team",
+        base: "Enstone, United Kingdom",
+        teamPrincipal: "Oliver Oakes",
+        firstEntry: 2021,
+        championships: 0,
+        primaryColor: "#0090FF",
+      },
+      {
+        id: "williams",
+        name: "Williams",
+        fullName: "Atlassian Williams Racing",
+        base: "Grove, United Kingdom",
+        teamPrincipal: "James Vowles",
+        firstEntry: 1977,
+        championships: 9,
+        primaryColor: "#005AFF",
+      },
+      {
+        id: "racing_bulls",
+        name: "Racing Bulls",
+        fullName: "Visa Cash App Racing Bulls F1 Team",
+        base: "Faenza, Italy",
+        teamPrincipal: "Laurent Mekies",
+        firstEntry: 2024,
+        championships: 0,
+        primaryColor: "#00329B",
+      },
+      {
+        id: "stake",
+        name: "Stake F1 Team",
+        fullName: "Stake F1 Team Kick Sauber",
+        base: "Hinwil, Switzerland",
+        teamPrincipal: "Jonathan Wheatley",
+        firstEntry: 1993,
+        championships: 0,
+        primaryColor: "#52E252",
+      },
+      {
+        id: "haas",
+        name: "Haas F1 Team",
+        fullName: "MoneyGram Haas F1 Team",
+        base: "Kannapolis, United States",
+        teamPrincipal: "Ayao Komatsu",
+        firstEntry: 2016,
+        championships: 0,
+        primaryColor: "#FFFFFF",
+      },
+    ];
+
+    const teamProfiles = document.getElementById("team-profiles");
+
+    // Replace loading with team cards
+    teamProfiles.innerHTML = "";
+
+    teams.forEach((team) => {
+      const teamCol = document.createElement("div");
+      teamCol.className = "col-md-4 mb-4";
+
+      teamCol.innerHTML = `
+            <div class="card team-card h-100">
+                <div class="card-header text-white" style="background-color: ${
+                  team.primaryColor
+                };">
+                    <h5 class="mb-0">${team.name}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <img src="${getTeamLogoUrl(
+                          team.id
+                        )}" class="team-logo-large" alt="${
+        team.name
+      } logo" style="max-width: 200px;">
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">${
+                      team.fullName
+                    }</h6>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Team Principal:</span>
+                            <span>${team.teamPrincipal}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Base:</span>
+                            <span>${team.base}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>First Entry:</span>
+                            <span>${team.firstEntry}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Championships:</span>
+                            <span>${team.championships}</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <a href="/team/${
+                          team.id
+                        }" class="btn btn-outline-primary">Team Details</a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+      teamProfiles.appendChild(teamCol);
+    });
+
+    function getTeamLogoUrl(teamId) {
+      // In a real app, this would be actual team logos
+      return `/static/images/team-logo-placeholder.png`;
+    }
+  });
+</script>
+{% endblock %}

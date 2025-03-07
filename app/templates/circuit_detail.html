@@ -1,0 +1,404 @@
+{% extends 'base.html' %} {% block title %}Circuit Profile - F1 Pulse{% endblock
+%} {% block content %}
+<div class="circuit-detail-page">
+  <div class="loading-container text-center py-5" id="circuit-loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading circuit information...</p>
+  </div>
+
+  <div class="circuit-content d-none" id="circuit-content">
+    <div class="mb-4 circuit-header">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('main.index') }}">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('main.races') }}">Races</a>
+          </li>
+          <li
+            class="breadcrumb-item active"
+            aria-current="page"
+            id="circuit-breadcrumb"
+          >
+            Circuit Profile
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            <h2 class="mb-0" id="circuit-name">Circuit Name</h2>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-4 mb-md-0">
+                <h4>Circuit Information</h4>
+                <ul class="list-group list-group-flush">
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Location:</span>
+                    <span id="circuit-location" class="fw-bold"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Country:</span>
+                    <span id="circuit-country"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Length:</span>
+                    <span id="circuit-length"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Turns:</span>
+                    <span id="circuit-turns"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>DRS Zones:</span>
+                    <span id="circuit-drs-zones"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Race Distance:</span>
+                    <span id="circuit-race-distance"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>First Grand Prix:</span>
+                    <span id="circuit-first-gp"></span>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h4>Lap Record</h4>
+                <div class="card bg-light mb-3">
+                  <div class="card-body">
+                    <p class="mb-1">
+                      <strong>Time:</strong> <span id="lap-record-time"></span>
+                    </p>
+                    <p class="mb-1">
+                      <strong>Driver:</strong>
+                      <span id="lap-record-driver"></span>
+                    </p>
+                    <p class="mb-0">
+                      <strong>Year:</strong> <span id="lap-record-year"></span>
+                    </p>
+                  </div>
+                </div>
+
+                <h4 class="mt-4">Most Wins</h4>
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <ul class="list-unstyled" id="most-wins-list">
+                      <!-- Will be populated via JavaScript -->
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Circuit Description</h3>
+          </div>
+          <div class="card-body">
+            <p id="circuit-description" class="mb-0"></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Key Features</h3>
+          </div>
+          <div class="card-body">
+            <div class="row" id="key-features">
+              <!-- Will be populated via JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Circuit Map</h3>
+          </div>
+          <div class="card-body text-center">
+            <div class="circuit-map-container position-relative">
+              <img
+                src="{{ url_for('static', filename='images/circuit-placeholder.jpg') }}"
+                alt="Circuit Map"
+                class="img-fluid rounded"
+                id="circuit-map"
+              />
+              <!-- Interactive hotspots would be added here in a real app -->
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Weather Forecast</h3>
+          </div>
+          <div class="card-body">
+            <div class="weather-forecast" id="weather-forecast">
+              <!-- Will be populated via JavaScript -->
+              <div class="text-center">
+                <p class="text-muted">
+                  Weather forecast will be available closer to race weekend.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Upcoming Race</h3>
+          </div>
+          <div class="card-body" id="upcoming-race">
+            <!-- Will be populated via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Previous Results</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Winner</th>
+                    <th>Team</th>
+                    <th>Pole Position</th>
+                    <th>Fastest Lap</th>
+                  </tr>
+                </thead>
+                <tbody id="previous-results-body">
+                  <!-- Will be populated via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const circuitId = urlParams.get("id");
+
+    if (!circuitId) {
+      document.getElementById("circuit-not-found").classList.remove("d-none");
+      document.getElementById("circuit-loading").classList.add("d-none");
+      return;
+    }
+
+    // Fetch circuit data from the API
+    fetch(`/api/circuit/${circuitId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const circuitData = data.MRData.CircuitTable.Circuits[0];
+
+        if (!circuitData) {
+          document
+            .getElementById("circuit-not-found")
+            .classList.remove("d-none");
+          document.getElementById("circuit-loading").classList.add("d-none");
+          return;
+        }
+
+        // Fetch detailed circuit statistics from our database
+        fetch(`/api/circuit-stats/${circuitId}`)
+          .then((response) => response.json())
+          .then((circuitStats) => {
+            // Circuit name and location
+            document.getElementById("circuit-name").textContent =
+              circuitData.circuitName;
+            document.getElementById(
+              "circuit-location"
+            ).textContent = `${circuitData.Location.locality}, ${circuitData.Location.country}`;
+
+            // Circuit details
+            const circuitDetails = circuitStats.circuit;
+            document.getElementById("circuit-length").textContent =
+              circuitDetails.length ? `${circuitDetails.length} km` : "Unknown";
+            document.getElementById("circuit-turns").textContent =
+              circuitDetails.turns || "Unknown";
+            document.getElementById("circuit-drs-zones").textContent =
+              circuitDetails.drs_zones || "Unknown";
+            document.getElementById("circuit-race-distance").textContent =
+              circuitDetails.race_distance
+                ? `${circuitDetails.race_distance} km`
+                : "Unknown";
+            document.getElementById("circuit-first-gp").textContent =
+              circuitDetails.first_grand_prix || "Unknown";
+
+            // Lap record
+            if (circuitDetails.lap_record) {
+              document.getElementById("lap-record-time").textContent =
+                circuitDetails.lap_record;
+              if (circuitDetails.lap_record_year) {
+                document.getElementById(
+                  "lap-record-year"
+                ).textContent = `(${circuitDetails.lap_record_year})`;
+              }
+            } else {
+              document.getElementById("lap-record-container").innerHTML =
+                "No lap record available";
+            }
+
+            // Circuit map
+            if (circuitDetails.map_url) {
+              document.getElementById(
+                "circuit-map-container"
+              ).innerHTML = `<img src="${circuitDetails.map_url}" alt="${circuitData.circuitName} track map" class="img-fluid rounded">`;
+            } else {
+              document.getElementById(
+                "circuit-map-container"
+              ).innerHTML = `<div class="alert alert-info">No circuit map available</div>`;
+            }
+
+            // Circuit key features
+            const featuresContainer =
+              document.getElementById("circuit-features");
+            featuresContainer.innerHTML = "";
+
+            if (
+              circuitDetails.key_features &&
+              circuitDetails.key_features.length > 0
+            ) {
+              circuitDetails.key_features.forEach((feature) => {
+                const featureCard = document.createElement("div");
+                featureCard.className = "col-md-6 mb-3";
+                featureCard.innerHTML = `
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h5 class="card-title">${feature.name}</h5>
+                      <p class="card-text">${feature.description}</p>
+                    </div>
+                  </div>
+                `;
+                featuresContainer.appendChild(featureCard);
+              });
+            } else {
+              featuresContainer.innerHTML = `
+                <div class="col-12">
+                  <div class="alert alert-info">No key features information available</div>
+                </div>
+              `;
+            }
+
+            // Previous results
+            const resultsContainer = document.getElementById(
+              "previous-results-body"
+            );
+            resultsContainer.innerHTML = "";
+
+            if (
+              circuitStats.previous_results &&
+              circuitStats.previous_results.length > 0
+            ) {
+              circuitStats.previous_results.forEach((result) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                  <td>${result.year}</td>
+                  <td>${result.winner_name || "Unknown"}</td>
+                  <td>${result.winner_team || "Unknown"}</td>
+                  <td>${result.pole_position_driver || "Unknown"}</td>
+                  <td>${result.fastest_lap_driver || "Unknown"}</td>
+                `;
+                resultsContainer.appendChild(row);
+              });
+            } else {
+              resultsContainer.innerHTML = `
+                <tr>
+                  <td colspan="5" class="text-center">No previous results available</td>
+                </tr>
+              `;
+            }
+
+            // Circuit description
+            if (circuitDetails.description) {
+              document.getElementById("circuit-description").innerHTML =
+                circuitDetails.description;
+            } else {
+              document.getElementById(
+                "circuit-description"
+              ).innerHTML = `<p>The ${circuitData.circuitName} is located in ${circuitData.Location.locality}, ${circuitData.Location.country}. This circuit is known for its unique layout and challenging corners.</p>`;
+            }
+
+            // Set Google Maps
+            const lat = circuitData.Location.lat;
+            const lng = circuitData.Location.long;
+            loadGoogleMap(lat, lng, circuitData.circuitName);
+
+            // Show content and hide loading
+            document.getElementById("circuit-loading").classList.add("d-none");
+            document
+              .getElementById("circuit-content")
+              .classList.remove("d-none");
+          })
+          .catch((error) => {
+            console.error("Error fetching circuit stats:", error);
+            document.getElementById("circuit-loading").classList.add("d-none");
+            document.getElementById("circuit-error").classList.remove("d-none");
+          });
+      })
+      .catch((error) => {
+        console.error("Error fetching circuit info:", error);
+        document.getElementById("circuit-loading").classList.add("d-none");
+        document.getElementById("circuit-error").classList.remove("d-none");
+      });
+
+    // Function to load Google Maps
+    function loadGoogleMap(lat, lng, circuitName) {
+      const mapContainer = document.getElementById("google-map");
+
+      if (!lat || !lng) {
+        mapContainer.innerHTML = `<div class="alert alert-info">No map coordinates available</div>`;
+        return;
+      }
+
+      // Create the map iframe
+      const iframe = document.createElement("iframe");
+      iframe.width = "100%";
+      iframe.height = "450";
+      iframe.style.border = "0";
+      iframe.loading = "lazy";
+      iframe.allowFullscreen = true;
+      iframe.src = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBzLCOIeeBitjSL1xVMoPmN-79-mYb3XrA&q=${lat},${lng}&zoom=14&maptype=satellite`;
+
+      mapContainer.innerHTML = "";
+      mapContainer.appendChild(iframe);
+    }
+  });
+</script>
+{% endblock %}

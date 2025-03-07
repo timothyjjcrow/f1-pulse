@@ -1,0 +1,279 @@
+{% extends 'base.html' %} {% block title %}F1 Drivers - F1 Pulse{% endblock %}
+{% block content %}
+<div class="drivers-page">
+  <div class="text-center mb-4">
+    <h1 class="display-5 fw-bold">F1 Drivers</h1>
+    <p class="lead">
+      Detailed profiles and statistics for all Formula 1 drivers in the 2025
+      season
+    </p>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Driver Standings</h2>
+    </div>
+    <div class="card-body" id="driver-standings">
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading driver standings...</p>
+      </div>
+      <div class="table-responsive d-none" id="standings-table-container">
+        <table class="table table-striped standings-table">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Driver</th>
+              <th>Team</th>
+              <th>Points</th>
+              <th>Wins</th>
+            </tr>
+          </thead>
+          <tbody id="standings-tbody">
+            <!-- Will be populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title mb-4">Driver Profiles</h2>
+  <div class="row" id="driver-profiles">
+    <div class="col-md-12 text-center">
+      <div class="loading-container">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading driver profiles...</p>
+      </div>
+    </div>
+    <!-- Will be populated via JavaScript -->
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Fetch driver standings
+    fetch("/api/drivers")
+      .then((response) => response.json())
+      .then((data) => {
+        const standingsContainer = document.getElementById(
+          "standings-table-container"
+        );
+        const loadingContainer = document.querySelector(
+          "#driver-standings .loading-container"
+        );
+        const tbody = document.getElementById("standings-tbody");
+
+        const standingsData =
+          data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
+
+        if (standingsData.length > 0) {
+          standingsData.forEach((driver) => {
+            const tr = document.createElement("tr");
+
+            tr.innerHTML = `
+                        <td class="position">${driver.position}</td>
+                        <td>
+                            <a href="/driver/${driver.Driver.driverId}">
+                                ${driver.Driver.givenName} ${
+              driver.Driver.familyName
+            }
+                            </a>
+                            <span class="badge ${
+                              driver.position <= 3
+                                ? "bg-warning text-dark"
+                                : "bg-secondary"
+                            }">
+                                ${
+                                  driver.Driver.code ||
+                                  driver.Driver.permanentNumber ||
+                                  ""
+                                }
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/team/${
+                              driver.Constructors[0].constructorId
+                            }">
+                                ${driver.Constructors[0].name}
+                            </a>
+                        </td>
+                        <td>${driver.points}</td>
+                        <td>${driver.wins}</td>
+                    `;
+
+            tbody.appendChild(tr);
+          });
+
+          // Hide loading, show table
+          loadingContainer.classList.add("d-none");
+          standingsContainer.classList.remove("d-none");
+        } else {
+          // If no data, show message
+          loadingContainer.innerHTML =
+            "<p>No driver standings available at this time.</p>";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching driver standings:", error);
+        const loadingContainer = document.querySelector(
+          "#driver-standings .loading-container"
+        );
+        loadingContainer.innerHTML =
+          "<p>Error loading driver standings. Please try again later.</p>";
+      });
+
+    // Create fake driver profile cards for 2025 F1 grid
+    const drivers = [
+      {
+        id: "verstappen",
+        code: "VER",
+        firstName: "Max",
+        lastName: "Verstappen",
+        team: "Red Bull Racing",
+        number: 1,
+        nationality: "Dutch",
+      },
+      {
+        id: "hamilton",
+        code: "HAM",
+        firstName: "Lewis",
+        lastName: "Hamilton",
+        team: "Ferrari",
+        number: 44,
+        nationality: "British",
+      },
+      {
+        id: "norris",
+        code: "NOR",
+        firstName: "Lando",
+        lastName: "Norris",
+        team: "McLaren",
+        number: 4,
+        nationality: "British",
+      },
+      {
+        id: "leclerc",
+        code: "LEC",
+        firstName: "Charles",
+        lastName: "Leclerc",
+        team: "Ferrari",
+        number: 16,
+        nationality: "Monégasque",
+      },
+      {
+        id: "russell",
+        code: "RUS",
+        firstName: "George",
+        lastName: "Russell",
+        team: "Mercedes",
+        number: 63,
+        nationality: "British",
+      },
+      {
+        id: "piastri",
+        code: "PIA",
+        firstName: "Oscar",
+        lastName: "Piastri",
+        team: "McLaren",
+        number: 81,
+        nationality: "Australian",
+      },
+      {
+        id: "sainz",
+        code: "SAI",
+        firstName: "Carlos",
+        lastName: "Sainz",
+        team: "Williams",
+        number: 55,
+        nationality: "Spanish",
+      },
+      {
+        id: "lawson",
+        code: "LAW",
+        firstName: "Liam",
+        lastName: "Lawson",
+        team: "Red Bull Racing",
+        number: 30,
+        nationality: "New Zealander",
+      },
+      {
+        id: "alonso",
+        code: "ALO",
+        firstName: "Fernando",
+        lastName: "Alonso",
+        team: "Aston Martin",
+        number: 14,
+        nationality: "Spanish",
+      },
+      {
+        id: "antonelli",
+        code: "ANT",
+        firstName: "Andrea Kimi",
+        lastName: "Antonelli",
+        team: "Mercedes",
+        number: 12,
+        nationality: "Italian",
+      },
+    ];
+
+    const driverProfiles = document.getElementById("driver-profiles");
+
+    // Replace loading with driver cards
+    driverProfiles.innerHTML = "";
+
+    drivers.forEach((driver) => {
+      const driverCol = document.createElement("div");
+      driverCol.className = "col-md-3 col-sm-6 mb-4";
+
+      driverCol.innerHTML = `
+            <div class="card driver-card h-100">
+                <div class="driver-number text-center p-2 bg-dark text-white">#${
+                  driver.number
+                }</div>
+                <img src="${getDriverImageUrl(
+                  driver.id
+                )}" class="card-img-top" alt="${driver.firstName} ${
+        driver.lastName
+      }">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        ${driver.firstName} ${driver.lastName}
+                        <span class="badge bg-dark">${driver.code}</span>
+                    </h5>
+                    <p class="card-text">
+                        <small class="text-muted">${driver.team}</small>
+                    </p>
+                    <p class="card-text">
+                        <img src="${getNationalityFlagUrl(
+                          driver.nationality
+                        )}" class="nationality-flag" alt="${
+        driver.nationality
+      } flag" width="20">
+                        ${driver.nationality}
+                    </p>
+                    <a href="/driver/${
+                      driver.id
+                    }" class="btn btn-sm btn-outline-primary">View Profile</a>
+                </div>
+            </div>
+        `;
+
+      driverProfiles.appendChild(driverCol);
+    });
+
+    function getDriverImageUrl(driverId) {
+      // In a real app, this would be actual driver images
+      return `/static/images/driver-placeholder.jpg`;
+    }
+
+    function getNationalityFlagUrl(nationality) {
+      // In a real app, this would be actual flag images
+      return `/static/images/flag-placeholder.png`;
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,890 @@
+{% extends 'base.html' %} {% block title %}Driver Profile - F1 Pulse{% endblock
+%} {% block custom_css %}
+<style>
+  /* Custom styles for driver detail page */
+  .circuit-link {
+    color: #666;
+    text-decoration: none;
+  }
+
+  .circuit-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+  }
+
+  .race-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .race-link:hover {
+    color: #0056b3;
+    text-decoration: none;
+  }
+
+  #recent-races-table {
+    font-size: 0.9rem;
+  }
+
+  #recent-races-table th {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+  }
+
+  .text-purple {
+    color: #9c27b0;
+  }
+
+  /* Position colors */
+  .table-warning {
+    background-color: rgba(255, 215, 0, 0.15) !important; /* Gold for 1st */
+  }
+
+  .table-light {
+    background-color: rgba(192, 192, 192, 0.15) !important; /* Silver for 2nd */
+  }
+
+  .table-danger {
+    background-color: rgba(205, 127, 50, 0.15) !important; /* Bronze for 3rd */
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="driver-detail-page">
+  <div class="loading-container text-center py-5" id="driver-loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading driver information...</p>
+  </div>
+
+  <div class="alert alert-warning d-none" id="driver-not-found">
+    <h4 class="alert-heading">Driver Not Found</h4>
+    <p>Sorry, we couldn't find information for the requested driver.</p>
+    <a href="{{ url_for('main.drivers') }}" class="btn btn-primary"
+      >Back to Drivers</a
+    >
+  </div>
+
+  <div class="alert alert-danger d-none" id="driver-error">
+    <h4 class="alert-heading">Error Loading Driver Data</h4>
+    <p>Sorry, we encountered an error while loading driver information.</p>
+    <a href="{{ url_for('main.drivers') }}" class="btn btn-primary"
+      >Back to Drivers</a
+    >
+  </div>
+
+  <div class="driver-content d-none" id="driver-content">
+    <div class="mb-4 driver-header">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('main.index') }}">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('main.drivers') }}">Drivers</a>
+          </li>
+          <li
+            class="breadcrumb-item active"
+            aria-current="page"
+            id="driver-breadcrumb"
+          >
+            Driver Profile
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-md-4 mb-4 mb-md-0">
+        <div class="card profile-card h-100">
+          <div class="card-header text-center" id="driver-number-header">
+            <span class="fs-4 fw-bold">#</span>
+          </div>
+          <div class="text-center p-3">
+            <img
+              src="{{ url_for('static', filename='images/driver-placeholder.jpg') }}"
+              alt="Driver"
+              id="driver-image"
+              class="img-fluid rounded driver-profile-image"
+            />
+            <img
+              src="{{ url_for('static', filename='images/flag-placeholder.png') }}"
+              alt="Flag"
+              id="driver-flag"
+              class="flag-image mt-2"
+              style="max-width: 40px"
+            />
+          </div>
+          <div class="card-body">
+            <h2 class="card-title text-center mb-3" id="driver-name">
+              Driver Name
+            </h2>
+            <div class="driver-info">
+              <ul class="list-group list-group-flush">
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Team:</span>
+                  <span id="driver-team" class="fw-bold"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Nationality:</span>
+                  <span id="driver-nationality"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Date of Birth:</span>
+                  <span id="driver-dob"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Championships:</span>
+                  <span id="driver-championships" class="fw-bold"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Race Wins:</span>
+                  <span id="driver-wins" class="fw-bold"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Podiums:</span>
+                  <span id="driver-podiums"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Pole Positions:</span>
+                  <span id="driver-poles"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>Fastest Laps:</span>
+                  <span id="driver-fastest-laps"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>First Race:</span>
+                  <span id="driver-first-race"></span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Driver Biography</h3>
+              </div>
+              <div class="card-body">
+                <p id="driver-biography" class="mb-0"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">2024 Season Performance</h3>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                      <div class="card-body text-center">
+                        <h4 class="card-title">Championship Standing</h4>
+                        <div class="position-indicator mb-3">
+                          <span
+                            class="display-1 fw-bold"
+                            id="driver-position"
+                          ></span>
+                          <span class="text-muted">/ 20</span>
+                        </div>
+                        <p class="mb-0 fs-4" id="driver-points"></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card h-100">
+                      <div class="card-body">
+                        <h4 class="card-title">Season Results</h4>
+                        <div
+                          class="chart-container"
+                          style="position: relative; height: 200px"
+                        >
+                          <canvas id="seasonResultsChart"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div
+                class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+              >
+                <h3 class="mb-0">Recent Races</h3>
+                <span
+                  class="badge bg-light text-dark rounded-pill"
+                  id="races-count"
+                  >0 races</span
+                >
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover" id="recent-races-table">
+                    <thead>
+                      <tr>
+                        <th>Race</th>
+                        <th>Date</th>
+                        <th>Position</th>
+                        <th>Grid</th>
+                        <th>+/-</th>
+                        <th>Points</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recent-races-body">
+                      <!-- Will be populated via JavaScript -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Helmet and Car</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-4 mb-md-0 text-center">
+                <h4>Helmet Design</h4>
+                <img
+                  src="{{ url_for('static', filename='images/helmet-placeholder.jpg') }}"
+                  alt="Helmet"
+                  id="driver-helmet"
+                  class="img-fluid rounded helmet-image mb-2"
+                />
+                <p class="text-muted">Unique design for the 2024 season</p>
+              </div>
+              <div class="col-md-8 text-center">
+                <h4>Team Car</h4>
+                <img
+                  src="{{ url_for('static', filename='images/car-placeholder.png') }}"
+                  alt="Team Car"
+                  class="img-fluid rounded mb-3"
+                  id="team-car"
+                />
+                <p class="text-muted" id="car-info">2024 Formula 1 car</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media Links -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Social Media</h3>
+          </div>
+          <div class="card-body text-center">
+            <div class="social-links">
+              <a href="#" class="btn btn-outline-dark mx-2"
+                ><i class="fab fa-twitter me-2"></i>Twitter</a
+              >
+              <a href="#" class="btn btn-outline-dark mx-2"
+                ><i class="fab fa-instagram me-2"></i>Instagram</a
+              >
+              <a href="#" class="btn btn-outline-dark mx-2"
+                ><i class="fab fa-facebook me-2"></i>Facebook</a
+              >
+              <a href="#" class="btn btn-outline-dark mx-2"
+                ><i class="fab fa-youtube me-2"></i>YouTube</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Store UI element references centrally to avoid repetitive DOM lookups
+    const elements = {
+      loading: document.getElementById("driver-loading"),
+      content: document.getElementById("driver-content"),
+      notFound: document.getElementById("driver-not-found"),
+      error: document.getElementById("driver-error"),
+    };
+
+    // Helper function to show/hide UI elements
+    function updateUIState(showElements, hideElements) {
+      if (showElements && showElements.length) {
+        showElements.forEach((el) => el && el.classList.remove("d-none"));
+      }
+      if (hideElements && hideElements.length) {
+        hideElements.forEach((el) => el && el.classList.add("d-none"));
+      }
+    }
+
+    // Helper function to show error and hide loading
+    function showError() {
+      updateUIState([elements.error], [elements.loading, elements.content]);
+    }
+
+    // Helper function to show "not found" and hide loading
+    function showNotFound() {
+      updateUIState([elements.notFound], [elements.loading, elements.content]);
+    }
+
+    // Helper to safely update text content of elements
+    function updateTextContent(id, value) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = value;
+      }
+    }
+
+    // Get driver ID from URL path (not from query parameters)
+    const pathParts = window.location.pathname.split("/");
+    const driverId = pathParts[pathParts.length - 1]; // Get the last part of the path
+
+    if (!driverId) {
+      showNotFound();
+      return;
+    }
+
+    // Get driver info from API
+    fetch(`/api/driver/${driverId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Driver API responded with status: ${response.status}`
+          );
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Validate the data structure
+        if (
+          !data.MRData ||
+          !data.MRData.DriverTable ||
+          !data.MRData.DriverTable.Drivers
+        ) {
+          console.error("Invalid driver data structure", data);
+          showNotFound();
+          return;
+        }
+
+        const driverData = data.MRData.DriverTable.Drivers[0];
+
+        if (!driverData) {
+          showNotFound();
+          return;
+        }
+
+        // Fetch detailed driver statistics from our database
+        fetch(`/api/driver-stats/${driverId}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                `Driver stats API responded with status: ${response.status}`
+              );
+            }
+            return response.json();
+          })
+          .then((driverStats) => {
+            try {
+              // Driver header info
+              updateTextContent(
+                "driver-name",
+                `${driverData.givenName} ${driverData.familyName}`
+              );
+
+              // Set flag image with fallback
+              const flagElement = document.getElementById("driver-flag");
+              if (flagElement) {
+                setFlagWithFallback(flagElement, driverData.nationality);
+              }
+
+              updateTextContent("driver-nationality", driverData.nationality);
+              updateTextContent("driver-code", driverData.code || "N/A");
+              updateTextContent(
+                "driver-number",
+                driverData.permanentNumber || "N/A"
+              );
+              updateTextContent(
+                "driver-dob",
+                new Date(driverData.dateOfBirth).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              );
+
+              // Basic driver details
+              updateTextContent(
+                "driver-team",
+                driverStats.team.name || "Unknown"
+              );
+              updateTextContent(
+                "driver-championships",
+                driverStats.career_stats.championships || "0"
+              );
+              updateTextContent(
+                "driver-wins",
+                driverStats.career_stats.race_wins || "0"
+              );
+              updateTextContent(
+                "driver-podiums",
+                driverStats.career_stats.podiums || "0"
+              );
+              updateTextContent(
+                "driver-poles",
+                driverStats.career_stats.pole_positions || "0"
+              );
+              updateTextContent(
+                "driver-fastest-laps",
+                driverStats.career_stats.fastest_laps || "0"
+              );
+              updateTextContent(
+                "driver-first-race",
+                driverStats.career_stats.first_race_year || "Unknown"
+              );
+
+              // Season standings
+              updateTextContent(
+                "driver-position",
+                driverStats.current_season.position || "N/A"
+              );
+              updateTextContent(
+                "driver-points",
+                `${driverStats.current_season.points || "0"} points`
+              );
+
+              // Biography
+              const bioElement = document.getElementById("driver-biography");
+              if (bioElement) {
+                const biography =
+                  driverStats.driver && driverStats.driver.biography
+                    ? driverStats.driver.biography
+                    : generateBiography(driverData);
+
+                bioElement.innerHTML = biography;
+              }
+
+              // Create chart with recent race results from real data
+              createResultsChart(driverStats.recent_races);
+
+              // Populate recent races table with real data
+              populateRecentRaces(driverStats.recent_races);
+
+              // Show content and hide loading
+              updateUIState([elements.content], [elements.loading]);
+            } catch (error) {
+              console.error("Error processing driver data:", error);
+              showError();
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching driver stats:", error);
+            showError();
+          });
+      })
+      .catch((error) => {
+        console.error("Error fetching driver info:", error);
+        showError();
+      });
+
+    function generateBiography(driverData) {
+      // Generate a biography if none exists in the database
+      const name = `${driverData.givenName} ${driverData.familyName}`;
+      const age =
+        new Date().getFullYear() -
+        new Date(driverData.dateOfBirth).getFullYear();
+
+      return `
+        <p>${name} is a ${driverData.nationality} racing driver currently competing in Formula 1. 
+        Born on ${new Date(driverData.dateOfBirth).toLocaleDateString()}, 
+        the ${age}-year-old has established himself as one of the sport's talented competitors.</p>
+        
+        <p>Throughout his career, ${
+          driverData.givenName
+        } has shown dedication and skill on the track, 
+        competing at the highest level of motorsport.</p>
+      `;
+    }
+
+    function createResultsChart(raceData) {
+      const ctx = document
+        .getElementById("seasonResultsChart")
+        .getContext("2d");
+
+      // Parse race results from real data if available
+      let labels = [];
+      let results = [];
+      let seasons = new Set(); // Track which seasons we have data for
+
+      if (
+        raceData &&
+        raceData.MRData &&
+        raceData.MRData.RaceTable &&
+        raceData.MRData.RaceTable.Races
+      ) {
+        const races = raceData.MRData.RaceTable.Races;
+
+        // Sort races by date to ensure they appear in chronological order
+        races.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        races.forEach((race) => {
+          if (race.Results && race.Results.length > 0) {
+            // Add year to the label if it's available
+            const raceDate = new Date(race.date);
+            const year = raceDate.getFullYear();
+            seasons.add(year);
+
+            // Format label as "Circuit (Year)"
+            const shortName = race.raceName.replace(" Grand Prix", "");
+            labels.push(`${shortName} (${year})`);
+
+            // If position exists, use it, otherwise show as DNF (value 21)
+            const position = race.Results[0].position
+              ? parseInt(race.Results[0].position)
+              : 21;
+            results.push(position);
+          }
+        });
+      }
+
+      // Create a title that reflects the seasons displayed
+      let chartTitle = "Race Results";
+      if (seasons.size > 0) {
+        const seasonsArray = Array.from(seasons).sort();
+        chartTitle = `Race Results (${seasonsArray.join("-")})`;
+      }
+
+      // Create the chart
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Race Position",
+              data: results,
+              borderColor: "#E10600",
+              backgroundColor: "rgba(225, 6, 0, 0.1)",
+              pointBackgroundColor: "#E10600",
+              pointBorderColor: "#fff",
+              pointRadius: 5,
+              tension: 0.1,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: chartTitle,
+              font: {
+                size: 16,
+              },
+            },
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const position = context.raw;
+                  if (position > 20) {
+                    return "DNF";
+                  } else {
+                    return `Position: ${position}`;
+                  }
+                },
+              },
+            },
+          },
+          scales: {
+            y: {
+              reverse: true,
+              min: 1,
+              max: 22,
+              ticks: {
+                stepSize: 1,
+                callback: function (value) {
+                  if (value <= 20) {
+                    return value;
+                  } else {
+                    return "DNF";
+                  }
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    function populateRecentRaces(raceData) {
+      const tbody = document.getElementById("recent-races-body");
+      tbody.innerHTML = ""; // Clear existing content
+
+      let recentRaces = [];
+
+      // Use real data if available
+      if (
+        raceData &&
+        raceData.MRData &&
+        raceData.MRData.RaceTable &&
+        raceData.MRData.RaceTable.Races
+      ) {
+        const races = raceData.MRData.RaceTable.Races;
+
+        // Sort races by date (most recent first)
+        races.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // Take up to 8 most recent races (increased from 5)
+        const recentRacesData = races.slice(0, 8);
+
+        recentRacesData.forEach((race) => {
+          if (race.Results && race.Results.length > 0) {
+            const result = race.Results[0];
+            const raceDate = new Date(race.date);
+            const year = raceDate.getFullYear();
+            const formattedDate = raceDate.toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            });
+
+            // Check if the race has a fastest lap
+            const hasFastestLap =
+              result.FastestLap && result.FastestLap.rank === "1";
+
+            // Determine finish status
+            const finished =
+              result.status === "Finished" || result.status.startsWith("+");
+
+            // Get position change from grid to finish
+            const gridPos = result.grid ? parseInt(result.grid) : null;
+            const finishPos = result.position
+              ? parseInt(result.position)
+              : null;
+            let positionChange = null;
+
+            if (gridPos && finishPos && gridPos !== 0) {
+              // 0 means pit start
+              positionChange = gridPos - finishPos;
+            }
+
+            recentRaces.push({
+              race: race.raceName,
+              circuit: race.Circuit.circuitName,
+              circuitId: race.Circuit.circuitId,
+              year: year,
+              round: race.round,
+              season: race.season,
+              date: formattedDate,
+              position: finishPos,
+              grid: gridPos,
+              status: result.status,
+              points: result.points ? parseFloat(result.points) : 0,
+              hasFastestLap: hasFastestLap,
+              finished: finished,
+              positionChange: positionChange,
+              lapTime: result.FastestLap ? result.FastestLap.Time.time : null,
+            });
+          }
+        });
+      }
+
+      // Update the race count badge
+      const racesCountElement = document.getElementById("races-count");
+      if (racesCountElement) {
+        racesCountElement.textContent = `${recentRaces.length} race${
+          recentRaces.length !== 1 ? "s" : ""
+        }`;
+      }
+
+      // Update the table header with the correct columns
+      const headerRow = document.querySelector("#recent-races-table thead tr");
+      if (headerRow) {
+        headerRow.innerHTML = `
+          <th>Race</th>
+          <th>Date</th>
+          <th>Position</th>
+          <th>Grid</th>
+          <th>+/-</th>
+          <th>Points</th>
+          <th>Status</th>
+        `;
+      }
+
+      if (recentRaces.length === 0) {
+        // If no race data, show a message
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="7" class="text-center">No recent races found for this driver.</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      recentRaces.forEach((race) => {
+        const tr = document.createElement("tr");
+
+        // Style based on position
+        if (race.position === 1) {
+          tr.classList.add("table-warning"); // Gold for 1st
+        } else if (race.position === 2) {
+          tr.classList.add("table-light"); // Silver for 2nd
+        } else if (race.position === 3) {
+          tr.classList.add("table-danger"); // Bronze/Red for 3rd
+        }
+
+        // Create position change indicator
+        let positionChangeHTML = "-";
+        if (race.positionChange !== null) {
+          if (race.positionChange > 0) {
+            positionChangeHTML = `<span class="text-success">+${race.positionChange} <i class="fas fa-arrow-up"></i></span>`;
+          } else if (race.positionChange < 0) {
+            positionChangeHTML = `<span class="text-danger">${race.positionChange} <i class="fas fa-arrow-down"></i></span>`;
+          } else {
+            positionChangeHTML = `<span class="text-muted">0</span>`;
+          }
+        }
+
+        // Format position with fastest lap indicator
+        let positionHTML = race.position || "-";
+        if (race.hasFastestLap) {
+          let fastestLapTooltip = race.lapTime
+            ? `Fastest Lap: ${race.lapTime}`
+            : "Fastest Lap";
+          positionHTML += ` <i class="fas fa-stopwatch text-purple" data-bs-toggle="tooltip" title="${fastestLapTooltip}"></i>`;
+        }
+
+        // Status with formatting
+        let statusHTML = race.status;
+        if (!race.finished) {
+          statusHTML = `<span class="text-danger">${race.status}</span>`;
+        }
+
+        // Create race link for detailed view
+        const raceLink = `/race/${race.season}/${race.round}`;
+        const circuitLink = `/circuit/${race.circuitId}`;
+
+        tr.innerHTML = `
+            <td>
+              <a href="${raceLink}" class="race-link">
+                ${race.race.replace(" Grand Prix", "")}
+                <small class="d-block text-muted">
+                  <a href="${circuitLink}" class="circuit-link">${
+          race.circuit
+        }</a>
+                </small>
+              </a>
+            </td>
+            <td>${race.date}</td>
+            <td>${positionHTML}</td>
+            <td>${race.grid || "-"}</td>
+            <td>${positionChangeHTML}</td>
+            <td>${race.points}</td>
+            <td>${statusHTML}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      // Initialize tooltips
+      if (typeof bootstrap !== "undefined" && bootstrap.Tooltip) {
+        const tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+      }
+    }
+
+    function getPointsForPosition(position) {
+      // F1 points system
+      const pointsSystem = {
+        1: 25,
+        2: 18,
+        3: 15,
+        4: 12,
+        5: 10,
+        6: 8,
+        7: 6,
+        8: 4,
+        9: 2,
+        10: 1,
+      };
+
+      return pointsSystem[position] || 0;
+    }
+
+    // Add the flag helper function
+    function setFlagWithFallback(flagElement, nationality) {
+      if (!nationality) {
+        flagElement.src = "/static/images/flag-placeholder.png";
+        flagElement.alt = "Flag placeholder";
+        return;
+      }
+
+      // Create standardized flag filename from nationality
+      const flagName = nationality.toLowerCase().replace(/\s+/g, "-");
+      const flagSrc = `/static/images/flags/${flagName}.png`;
+
+      // Try to load the flag, fall back to placeholder if it fails
+      const img = new Image();
+      img.onload = function () {
+        flagElement.src = flagSrc;
+        flagElement.alt = `${nationality} flag`;
+      };
+      img.onerror = function () {
+        console.log(
+          `Flag not found for ${nationality} (${flagSrc}), using placeholder`
+        );
+        flagElement.src = "/static/images/flag-placeholder.png";
+        flagElement.alt = `${nationality} flag (placeholder)`;
+      };
+      img.src = flagSrc;
+    }
+  });
+</script>
+{% endblock %}

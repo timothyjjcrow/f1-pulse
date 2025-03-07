@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - F1 Pulse{% endblock %}
+
+{% block content %}
+<div class="edit-profile-page">
+    <div class="mb-4">
+        <h1 class="display-5 fw-bold">Edit Profile</h1>
+        <p class="lead">Update your account information and preferences</p>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Profile Information</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('auth.edit_profile') }}" enctype="multipart/form-data">
+                        <div class="text-center mb-4">
+                            {% if current_user.avatar_url %}
+                            <img src="{{ current_user.avatar_url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px; max-height: 150px;">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='images/default-avatar.png') }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px; max-height: 150px;">
+                            {% endif %}
+                            
+                            <div class="mb-3">
+                                <label for="avatar" class="form-label">Profile Picture</label>
+                                <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
+                                <div class="form-text">Upload a new profile picture (JPG, PNG, GIF). Max size: 2MB</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ current_user.first_name or '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ current_user.last_name or '' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" value="{{ current_user.email }}" disabled>
+                            <div class="form-text">Email cannot be changed. Contact support if you need to update your email.</div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h4>F1 Preferences</h4>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="favorite_driver" class="form-label">Favorite Driver</label>
+                                <select class="form-select" id="favorite_driver" name="favorite_driver">
+                                    <option value="">Select a driver</option>
+                                    <option value="verstappen" {% if current_user.favorite_driver_id == 'verstappen' %}selected{% endif %}>Max Verstappen</option>
+                                    <option value="hamilton" {% if current_user.favorite_driver_id == 'hamilton' %}selected{% endif %}>Lewis Hamilton</option>
+                                    <option value="norris" {% if current_user.favorite_driver_id == 'norris' %}selected{% endif %}>Lando Norris</option>
+                                    <option value="leclerc" {% if current_user.favorite_driver_id == 'leclerc' %}selected{% endif %}>Charles Leclerc</option>
+                                    <option value="russell" {% if current_user.favorite_driver_id == 'russell' %}selected{% endif %}>George Russell</option>
+                                    <option value="piastri" {% if current_user.favorite_driver_id == 'piastri' %}selected{% endif %}>Oscar Piastri</option>
+                                    <option value="sainz" {% if current_user.favorite_driver_id == 'sainz' %}selected{% endif %}>Carlos Sainz</option>
+                                    <option value="alonso" {% if current_user.favorite_driver_id == 'alonso' %}selected{% endif %}>Fernando Alonso</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="favorite_team" class="form-label">Favorite Team</label>
+                                <select class="form-select" id="favorite_team" name="favorite_team">
+                                    <option value="">Select a team</option>
+                                    <option value="red_bull" {% if current_user.favorite_team_id == 'red_bull' %}selected{% endif %}>Red Bull Racing</option>
+                                    <option value="ferrari" {% if current_user.favorite_team_id == 'ferrari' %}selected{% endif %}>Ferrari</option>
+                                    <option value="mercedes" {% if current_user.favorite_team_id == 'mercedes' %}selected{% endif %}>Mercedes</option>
+                                    <option value="mclaren" {% if current_user.favorite_team_id == 'mclaren' %}selected{% endif %}>McLaren</option>
+                                    <option value="aston_martin" {% if current_user.favorite_team_id == 'aston_martin' %}selected{% endif %}>Aston Martin</option>
+                                    <option value="alpine" {% if current_user.favorite_team_id == 'alpine' %}selected{% endif %}>Alpine</option>
+                                    <option value="williams" {% if current_user.favorite_team_id == 'williams' %}selected{% endif %}>Williams</option>
+                                    <option value="racing_bulls" {% if current_user.favorite_team_id == 'racing_bulls' %}selected{% endif %}>Racing Bulls</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

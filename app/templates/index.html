@@ -1,0 +1,275 @@
+{% extends 'base.html' %} {% block title %}F1 Pulse - Real-time Formula 1
+Updates{% endblock %} {% block content %}
+<section class="hero-section py-5 mb-5 bg-dark text-white rounded">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold">Welcome to F1 Pulse</h1>
+        <p class="lead">
+          Your real-time source for Formula 1 race updates, driver stats, and
+          interactive fan experiences
+        </p>
+        <div class="mt-4">
+          <a href="#next-race" class="btn btn-primary btn-lg me-2">Next Race</a>
+          <a
+            href="{{ url_for('main.standings') }}"
+            class="btn btn-outline-light btn-lg"
+            >Current Standings</a
+          >
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <img
+          src="{{ url_for('static', filename='images/f1-hero.jpg') }}"
+          alt="Formula 1"
+          class="img-fluid rounded"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="next-race" class="mb-5">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Next Race</h2>
+    </div>
+    <div class="card-body" id="next-race-content">
+      <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading race information...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features mb-5">
+  <h2 class="section-title mb-4">Features</h2>
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fas fa-tachometer-alt me-2 text-primary"></i> Live Race
+            Tracker
+          </h5>
+          <p class="card-text">
+            Get real-time lap times, positions, and incident updates during
+            races. Stay informed with our countdown to the next Grand Prix.
+          </p>
+          <a
+            href="{{ url_for('main.races') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Explore Races</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fas fa-users me-2 text-primary"></i> Driver & Team
+            Profiles
+          </h5>
+          <p class="card-text">
+            Detailed statistics and profiles for all 2025 drivers and teams,
+            including career wins, points, and current standings.
+          </p>
+          <a
+            href="{{ url_for('main.drivers') }}"
+            class="btn btn-sm btn-outline-primary"
+            >See Drivers</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fas fa-map-marker-alt me-2 text-primary"></i> Interactive
+            Track Maps
+          </h5>
+          <p class="card-text">
+            Explore circuit layouts with lap records and key overtaking spots.
+            Learn about each track's unique characteristics.
+          </p>
+          <a
+            href="{{ url_for('main.races') }}"
+            class="btn btn-sm btn-outline-primary"
+            >View Tracks</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fas fa-history me-2 text-primary"></i> Historical Data
+          </h5>
+          <p class="card-text">
+            Access past race results, championship winners, and notable records,
+            providing a comprehensive view of F1's rich history.
+          </p>
+          <a href="#" class="btn btn-sm btn-outline-primary">Explore History</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fas fa-stopwatch me-2 text-primary"></i> Virtual Pit Stop
+            Challenge
+          </h5>
+          <p class="card-text">
+            Test your strategic skills with our Virtual Pit Stop Challenge.
+            Learn about tire choices and timing in this interactive game.
+          </p>
+          <a
+            href="{{ url_for('main.pit_stop_challenge') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Try the Challenge</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="latest-news mb-5">
+  <h2 class="section-title mb-4">Latest News</h2>
+  <div class="row" id="latest-news-content">
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/news-placeholder-1.jpg') }}"
+          class="card-img-top"
+          alt="News"
+        />
+        <div class="card-body">
+          <h5 class="card-title">2024 Rule Changes Explained</h5>
+          <p class="card-text">
+            A detailed breakdown of the new regulations for the 2024 season and
+            how they affect race strategies.
+          </p>
+          <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+        </div>
+        <div class="card-footer text-muted">
+          <small>Published: March 5, 2024</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/news-placeholder-2.jpg') }}"
+          class="card-img-top"
+          alt="News"
+        />
+        <div class="card-body">
+          <h5 class="card-title">Hamilton's First Drive with Ferrari</h5>
+          <p class="card-text">
+            Lewis Hamilton shares his thoughts after his first testing session
+            with Scuderia Ferrari.
+          </p>
+          <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+        </div>
+        <div class="card-footer text-muted">
+          <small>Published: March 2, 2025</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='images/news-placeholder-3.jpg') }}"
+          class="card-img-top"
+          alt="News"
+        />
+        <div class="card-body">
+          <h5 class="card-title">Australian Grand Prix Preview</h5>
+          <p class="card-text">
+            What to expect at the season opener in Melbourne on March 14-16,
+            2025.
+          </p>
+          <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+        </div>
+        <div class="card-footer text-muted">
+          <small>Published: March 7, 2025</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Fetch next race information
+    fetch("/api/next-race")
+      .then((response) => response.json())
+      .then((data) => {
+        const raceData = data.MRData.RaceTable.Races[0];
+        if (raceData) {
+          const raceDate = new Date(
+            raceData.date + "T" + (raceData.time || "00:00:00Z")
+          );
+          const now = new Date();
+          const diffTime = Math.abs(raceDate - now);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          const content = `
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h3>${raceData.raceName}</h3>
+                            <p class="lead">Round ${raceData.round} of the ${
+            raceData.season
+          } Season</p>
+                            <p><strong>Circuit:</strong> ${
+                              raceData.Circuit.circuitName
+                            }</p>
+                            <p><strong>Location:</strong> ${
+                              raceData.Circuit.Location.locality
+                            }, ${raceData.Circuit.Location.country}</p>
+                            <p><strong>Date:</strong> ${new Date(
+                              raceData.date
+                            ).toLocaleDateString("en-US", {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}</p>
+                            <div class="countdown mt-3">
+                                <span class="badge bg-danger">${diffDays} days to go</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="circuit-map text-center">
+                                <img src="{{ url_for('static', filename='images/circuit-placeholder.jpg') }}" class="img-fluid rounded" alt="${
+                                  raceData.Circuit.circuitName
+                                }">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+          document.getElementById("next-race-content").innerHTML = content;
+        } else {
+          document.getElementById("next-race-content").innerHTML =
+            "<p>No upcoming races found.</p>";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching next race:", error);
+        document.getElementById("next-race-content").innerHTML =
+          "<p>Error loading race information. Please try again later.</p>";
+      });
+  });
+</script>
+{% endblock %}

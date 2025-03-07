@@ -1,0 +1,508 @@
+{% extends 'base.html' %} {% block title %}Search Results - F1 Pulse{% endblock
+%} {% block content %}
+<div class="search-page">
+  <div class="mb-4">
+    <h1 class="display-5 fw-bold">Search Results</h1>
+    <p class="lead">
+      Results for: <span id="search-query" class="fw-bold"></span>
+    </p>
+
+    <form class="mb-4" id="search-form-page">
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          id="search-input-page"
+          placeholder="Search for drivers, teams, circuits..."
+        />
+        <button class="btn btn-primary" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="loading-container text-center py-5" id="search-loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Searching...</p>
+  </div>
+
+  <div class="search-results d-none" id="search-results">
+    <ul class="nav nav-tabs mb-4" id="searchTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          id="all-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#all-results"
+          type="button"
+          role="tab"
+          aria-controls="all-results"
+          aria-selected="true"
+        >
+          All Results <span class="badge bg-secondary" id="all-count">0</span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="drivers-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#drivers-results"
+          type="button"
+          role="tab"
+          aria-controls="drivers-results"
+          aria-selected="false"
+        >
+          Drivers <span class="badge bg-secondary" id="drivers-count">0</span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="teams-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#teams-results"
+          type="button"
+          role="tab"
+          aria-controls="teams-results"
+          aria-selected="false"
+        >
+          Teams <span class="badge bg-secondary" id="teams-count">0</span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="circuits-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#circuits-results"
+          type="button"
+          role="tab"
+          aria-controls="circuits-results"
+          aria-selected="false"
+        >
+          Circuits <span class="badge bg-secondary" id="circuits-count">0</span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="searchTabContent">
+      <!-- All Results Tab -->
+      <div
+        class="tab-pane fade show active"
+        id="all-results"
+        role="tabpanel"
+        aria-labelledby="all-tab"
+      >
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Drivers</h3>
+              </div>
+              <div class="card-body">
+                <div id="all-drivers-results">
+                  <!-- Will be populated via JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Teams</h3>
+              </div>
+              <div class="card-body">
+                <div id="all-teams-results">
+                  <!-- Will be populated via JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Circuits</h3>
+              </div>
+              <div class="card-body">
+                <div id="all-circuits-results">
+                  <!-- Will be populated via JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drivers Results Tab -->
+      <div
+        class="tab-pane fade"
+        id="drivers-results"
+        role="tabpanel"
+        aria-labelledby="drivers-tab"
+      >
+        <div class="row" id="drivers-results-container">
+          <!-- Will be populated via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Teams Results Tab -->
+      <div
+        class="tab-pane fade"
+        id="teams-results"
+        role="tabpanel"
+        aria-labelledby="teams-tab"
+      >
+        <div class="row" id="teams-results-container">
+          <!-- Will be populated via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Circuits Results Tab -->
+      <div
+        class="tab-pane fade"
+        id="circuits-results"
+        role="tabpanel"
+        aria-labelledby="circuits-tab"
+      >
+        <div class="row" id="circuits-results-container">
+          <!-- Will be populated via JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-results d-none" id="no-results">
+    <div class="alert alert-warning">
+      <h4 class="alert-heading">No Results Found</h4>
+      <p>Sorry, we couldn't find any results matching your search query.</p>
+      <hr />
+      <p class="mb-0">Try using different keywords or check your spelling.</p>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Get search query from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get("q");
+
+    // Set search query in page
+    document.getElementById("search-query").textContent = query;
+    document.getElementById("search-input-page").value = query;
+
+    // Handle search form submission
+    const searchForm = document.getElementById("search-form-page");
+    searchForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const newQuery = document
+        .getElementById("search-input-page")
+        .value.trim();
+      if (newQuery) {
+        window.location.href = `/search?q=${encodeURIComponent(newQuery)}`;
+      }
+    });
+
+    // Perform search
+    if (query) {
+      performSearch(query);
+    } else {
+      document.getElementById("search-loading").classList.add("d-none");
+      document.getElementById("no-results").classList.remove("d-none");
+    }
+
+    function performSearch(query) {
+      // Show loading indicator
+      document.getElementById("search-loading").classList.remove("d-none");
+      document.getElementById("search-results").classList.add("d-none");
+      document.getElementById("no-results").classList.add("d-none");
+
+      // Make API call to our backend search endpoint
+      fetch(`/api/search?q=${encodeURIComponent(query)}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((results) => {
+          // Update result counts
+          document.getElementById("all-count").textContent =
+            results.drivers.length +
+            results.teams.length +
+            results.circuits.length;
+          document.getElementById("drivers-count").textContent =
+            results.drivers.length;
+          document.getElementById("teams-count").textContent =
+            results.teams.length;
+          document.getElementById("circuits-count").textContent =
+            results.circuits.length;
+
+          if (
+            results.drivers.length +
+              results.teams.length +
+              results.circuits.length >
+            0
+          ) {
+            // Populate results
+            populateDriverResults(results.drivers);
+            populateTeamResults(results.teams);
+            populateCircuitResults(results.circuits);
+
+            // Show results
+            document.getElementById("search-loading").classList.add("d-none");
+            document
+              .getElementById("search-results")
+              .classList.remove("d-none");
+          } else {
+            // Show no results message
+            document.getElementById("search-loading").classList.add("d-none");
+            document.getElementById("no-results").classList.remove("d-none");
+          }
+        })
+        .catch((error) => {
+          console.error("Error searching:", error);
+          document.getElementById("search-loading").classList.add("d-none");
+          document.getElementById("no-results").classList.remove("d-none");
+          document.getElementById("no-results").innerHTML = `
+            <div class="alert alert-danger">
+              <h4 class="alert-heading">Error</h4>
+              <p>Sorry, there was an error performing your search. Please try again later.</p>
+            </div>
+          `;
+        });
+    }
+
+    function populateDriverResults(drivers) {
+      // Populate "All" tab
+      const allDriversResults = document.getElementById("all-drivers-results");
+      allDriversResults.innerHTML = "";
+
+      if (drivers.length > 0) {
+        const driversList = document.createElement("ul");
+        driversList.className = "list-group";
+
+        drivers.slice(0, 3).forEach((driver) => {
+          const listItem = document.createElement("li");
+          listItem.className = "list-group-item";
+          listItem.innerHTML = `
+                    <a href="/driver/${driver.id}" class="text-decoration-none">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-dark">#${driver.number}</span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0">${driver.name}</h5>
+                                <small class="text-muted">${driver.team}</small>
+                            </div>
+                        </div>
+                    </a>
+                `;
+          driversList.appendChild(listItem);
+        });
+
+        allDriversResults.appendChild(driversList);
+
+        if (drivers.length > 3) {
+          const viewMore = document.createElement("div");
+          viewMore.className = "text-center mt-3";
+          viewMore.innerHTML = `
+                    <button class="btn btn-sm btn-outline-primary" onclick="document.getElementById('drivers-tab').click()">
+                        View all ${drivers.length} drivers
+                    </button>
+                `;
+          allDriversResults.appendChild(viewMore);
+        }
+      } else {
+        allDriversResults.innerHTML =
+          '<p class="text-muted">No driver results found.</p>';
+      }
+
+      // Populate "Drivers" tab
+      const driversResultsContainer = document.getElementById(
+        "drivers-results-container"
+      );
+      driversResultsContainer.innerHTML = "";
+
+      if (drivers.length > 0) {
+        drivers.forEach((driver) => {
+          const driverCol = document.createElement("div");
+          driverCol.className = "col-md-3 col-sm-6 mb-4";
+
+          driverCol.innerHTML = `
+                    <div class="card h-100">
+                        <div class="card-header bg-dark text-white text-center">
+                            <h5 class="mb-0">#${driver.number}</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="/static/images/driver-placeholder.jpg" alt="${driver.name}" class="img-fluid rounded mb-3" style="max-height: 100px;">
+                            <h5 class="card-title">${driver.name}</h5>
+                            <p class="card-text text-muted">${driver.team}</p>
+                            <p class="card-text"><small>${driver.nationality}</small></p>
+                            <a href="/driver/${driver.id}" class="btn btn-sm btn-outline-primary">View Profile</a>
+                        </div>
+                    </div>
+                `;
+
+          driversResultsContainer.appendChild(driverCol);
+        });
+      } else {
+        driversResultsContainer.innerHTML =
+          '<div class="col-12"><p class="text-muted">No driver results found.</p></div>';
+      }
+    }
+
+    function populateTeamResults(teams) {
+      // Populate "All" tab
+      const allTeamsResults = document.getElementById("all-teams-results");
+      allTeamsResults.innerHTML = "";
+
+      if (teams.length > 0) {
+        const teamsList = document.createElement("ul");
+        teamsList.className = "list-group";
+
+        teams.slice(0, 3).forEach((team) => {
+          const listItem = document.createElement("li");
+          listItem.className = "list-group-item";
+          listItem.innerHTML = `
+                    <a href="/team/${team.id}" class="text-decoration-none">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-0">${team.name}</h5>
+                                <small class="text-muted">${team.fullName}</small>
+                            </div>
+                        </div>
+                    </a>
+                `;
+          teamsList.appendChild(listItem);
+        });
+
+        allTeamsResults.appendChild(teamsList);
+
+        if (teams.length > 3) {
+          const viewMore = document.createElement("div");
+          viewMore.className = "text-center mt-3";
+          viewMore.innerHTML = `
+                    <button class="btn btn-sm btn-outline-primary" onclick="document.getElementById('teams-tab').click()">
+                        View all ${teams.length} teams
+                    </button>
+                `;
+          allTeamsResults.appendChild(viewMore);
+        }
+      } else {
+        allTeamsResults.innerHTML =
+          '<p class="text-muted">No team results found.</p>';
+      }
+
+      // Populate "Teams" tab
+      const teamsResultsContainer = document.getElementById(
+        "teams-results-container"
+      );
+      teamsResultsContainer.innerHTML = "";
+
+      if (teams.length > 0) {
+        teams.forEach((team) => {
+          const teamCol = document.createElement("div");
+          teamCol.className = "col-md-4 mb-4";
+
+          teamCol.innerHTML = `
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <img src="/static/images/team-logo-placeholder.png" alt="${team.name}" class="img-fluid mb-3" style="max-height: 80px;">
+                            <h5 class="card-title">${team.name}</h5>
+                            <p class="card-text text-muted">${team.fullName}</p>
+                            <p class="card-text"><small>${team.base}</small></p>
+                            <a href="/team/${team.id}" class="btn btn-sm btn-outline-primary">View Team</a>
+                        </div>
+                    </div>
+                `;
+
+          teamsResultsContainer.appendChild(teamCol);
+        });
+      } else {
+        teamsResultsContainer.innerHTML =
+          '<div class="col-12"><p class="text-muted">No team results found.</p></div>';
+      }
+    }
+
+    function populateCircuitResults(circuits) {
+      // Populate "All" tab
+      const allCircuitsResults = document.getElementById(
+        "all-circuits-results"
+      );
+      allCircuitsResults.innerHTML = "";
+
+      if (circuits.length > 0) {
+        const circuitsList = document.createElement("ul");
+        circuitsList.className = "list-group";
+
+        circuits.slice(0, 3).forEach((circuit) => {
+          const listItem = document.createElement("li");
+          listItem.className = "list-group-item";
+          listItem.innerHTML = `
+                    <a href="/circuit/${circuit.id}" class="text-decoration-none">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-0">${circuit.name}</h5>
+                                <small class="text-muted">${circuit.location}, ${circuit.country}</small>
+                            </div>
+                        </div>
+                    </a>
+                `;
+          circuitsList.appendChild(listItem);
+        });
+
+        allCircuitsResults.appendChild(circuitsList);
+
+        if (circuits.length > 3) {
+          const viewMore = document.createElement("div");
+          viewMore.className = "text-center mt-3";
+          viewMore.innerHTML = `
+                    <button class="btn btn-sm btn-outline-primary" onclick="document.getElementById('circuits-tab').click()">
+                        View all ${circuits.length} circuits
+                    </button>
+                `;
+          allCircuitsResults.appendChild(viewMore);
+        }
+      } else {
+        allCircuitsResults.innerHTML =
+          '<p class="text-muted">No circuit results found.</p>';
+      }
+
+      // Populate "Circuits" tab
+      const circuitsResultsContainer = document.getElementById(
+        "circuits-results-container"
+      );
+      circuitsResultsContainer.innerHTML = "";
+
+      if (circuits.length > 0) {
+        circuits.forEach((circuit) => {
+          const circuitCol = document.createElement("div");
+          circuitCol.className = "col-md-4 mb-4";
+
+          circuitCol.innerHTML = `
+                    <div class="card h-100">
+                        <img src="/static/images/circuit-placeholder.jpg" class="card-img-top" alt="${circuit.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${circuit.name}</h5>
+                            <p class="card-text">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                ${circuit.location}, ${circuit.country}
+                            </p>
+                            <a href="/circuit/${circuit.id}" class="btn btn-sm btn-outline-primary">View Circuit</a>
+                        </div>
+                    </div>
+                `;
+
+          circuitsResultsContainer.appendChild(circuitCol);
+        });
+      } else {
+        circuitsResultsContainer.innerHTML =
+          '<div class="col-12"><p class="text-muted">No circuit results found.</p></div>';
+      }
+    }
+  });
+</script>
+{% endblock %}

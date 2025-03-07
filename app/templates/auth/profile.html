@@ -1,0 +1,231 @@
+{% extends 'base.html' %} {% block title %}My Profile - F1 Pulse{% endblock %}
+{% block content %}
+<div class="profile-page">
+  <div class="mb-4">
+    <h1 class="display-5 fw-bold">My Profile</h1>
+    <p class="lead">Manage your F1 Pulse account and preferences</p>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %} {% endif %} {% endwith %}
+
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Account Information</h3>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-4">
+            {% if current_user.avatar_url %}
+            <img
+              src="{{ current_user.avatar_url }}"
+              alt="Profile Picture"
+              class="img-fluid rounded-circle mb-3"
+              style="max-width: 150px"
+            />
+            {% else %}
+            <img
+              src="{{ url_for('static', filename='images/default-avatar.png') }}"
+              alt="Profile Picture"
+              class="img-fluid rounded-circle mb-3"
+              style="max-width: 150px"
+            />
+            {% endif %}
+            <h4>{{ current_user.username }}</h4>
+            <p class="text-muted">{{ current_user.email }}</p>
+          </div>
+
+          <ul class="list-group list-group-flush">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <span>Full Name:</span>
+              <span
+                >{{ current_user.first_name }} {{ current_user.last_name
+                }}</span
+              >
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <span>Member Since:</span>
+              <span>{{ current_user.created_at.strftime('%B %d, %Y') }}</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <span>Last Login:</span>
+              <span
+                >{{ current_user.last_login_at.strftime('%B %d, %Y') if
+                current_user.last_login_at else 'N/A' }}</span
+              >
+            </li>
+          </ul>
+
+          <div class="d-grid gap-2 mt-3">
+            <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-primary"
+              >Edit Profile</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">F1 Preferences</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <h4>Favorite Driver</h4>
+              {% if current_user.favorite_driver_id %}
+              <div class="card">
+                <div class="card-body text-center">
+                  <img
+                    src="{{ url_for('static', filename='images/driver-placeholder.jpg') }}"
+                    alt="Driver"
+                    class="img-fluid rounded mb-3"
+                    style="max-height: 100px"
+                  />
+                  <h5
+                    class="card-title"
+                    id="favorite-driver-name"
+                    data-driver-id="{{ current_user.favorite_driver_id }}"
+                  >
+                    Loading...
+                  </h5>
+                  <a
+                    href="{{ url_for('main.driver_detail', driver_id=current_user.favorite_driver_id) }}"
+                    class="btn btn-sm btn-outline-primary"
+                    >View Profile</a
+                  >
+                </div>
+              </div>
+              {% else %}
+              <div class="card">
+                <div class="card-body text-center">
+                  <p class="text-muted">No favorite driver selected</p>
+                  <a
+                    href="{{ url_for('main.drivers') }}"
+                    class="btn btn-sm btn-outline-primary"
+                    >Browse Drivers</a
+                  >
+                </div>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <h4>Favorite Team</h4>
+              {% if current_user.favorite_team_id %}
+              <div class="card">
+                <div class="card-body text-center">
+                  <img
+                    src="{{ url_for('static', filename='images/team-logo-placeholder.png') }}"
+                    alt="Team"
+                    class="img-fluid mb-3"
+                    style="max-height: 80px"
+                  />
+                  <h5
+                    class="card-title"
+                    id="favorite-team-name"
+                    data-team-id="{{ current_user.favorite_team_id }}"
+                  >
+                    Loading...
+                  </h5>
+                  <a
+                    href="{{ url_for('main.team_detail', constructor_id=current_user.favorite_team_id) }}"
+                    class="btn btn-sm btn-outline-primary"
+                    >View Team</a
+                  >
+                </div>
+              </div>
+              {% else %}
+              <div class="card">
+                <div class="card-body text-center">
+                  <p class="text-muted">No favorite team selected</p>
+                  <a
+                    href="{{ url_for('main.teams') }}"
+                    class="btn btn-sm btn-outline-primary"
+                    >Browse Teams</a
+                  >
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Activity</h3>
+        </div>
+        <div class="card-body">
+          <p class="text-muted text-center">Activity tracking coming soon!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Load favorite driver information if available
+    const driverElement = document.getElementById("favorite-driver-name");
+    if (driverElement) {
+      const driverId = driverElement.getAttribute("data-driver-id");
+      if (driverId) {
+        fetch("/api/driver/" + driverId)
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then(function (data) {
+            const driverData = data.MRData.DriverTable.Drivers[0];
+            if (driverData) {
+              driverElement.textContent =
+                driverData.givenName + " " + driverData.familyName;
+            }
+          })
+          .catch(function (error) {
+            console.error("Error fetching driver data:", error);
+            driverElement.textContent = "Driver data unavailable";
+          });
+      }
+    }
+
+    // Load favorite team information if available
+    const teamElement = document.getElementById("favorite-team-name");
+    if (teamElement) {
+      const teamId = teamElement.getAttribute("data-team-id");
+      if (teamId) {
+        fetch("/api/team/" + teamId)
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then(function (data) {
+            const teamData = data.MRData.ConstructorTable.Constructors[0];
+            if (teamData) {
+              teamElement.textContent = teamData.name;
+            }
+          })
+          .catch(function (error) {
+            console.error("Error fetching team data:", error);
+            teamElement.textContent = "Team data unavailable";
+          });
+      }
+    }
+  });
+</script>
+{% endblock %}

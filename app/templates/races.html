@@ -1,0 +1,310 @@
+{% extends 'base.html' %} {% block title %}F1 Race Calendar - F1 Pulse{%
+endblock %} {% block content %}
+<div class="races-page">
+  <div class="text-center mb-4">
+    <h1 class="display-5 fw-bold">F1 Race Calendar</h1>
+    <p class="lead">
+      Complete schedule for the 2024 Formula 1 season with circuit information
+    </p>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <div class="card h-100">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">2024 Season Calendar</h2>
+        </div>
+        <div class="card-body" id="race-calendar">
+          <div class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading race calendar...</p>
+          </div>
+          <div class="table-responsive d-none" id="calendar-table-container">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Round</th>
+                  <th>Race</th>
+                  <th>Circuit</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="calendar-tbody">
+                <!-- Will be populated via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Next Race</h2>
+        </div>
+        <div class="card-body" id="next-race">
+          <div class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading next race...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title mb-4">Circuit Information</h2>
+  <div class="row" id="circuit-cards">
+    <!-- Will be populated via JavaScript -->
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Debugging helper function
+    function logData(label, data) {
+      console.log("=== " + label + " ===");
+      console.log(data);
+      console.log("=================");
+    }
+
+    // Fetch season races
+    fetch("/api/season/2024")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        logData("Season Data", data);
+
+        const calendarContainer = document.getElementById(
+          "calendar-table-container"
+        );
+        const loadingContainer = document.querySelector(
+          "#race-calendar .loading-container"
+        );
+        const tbody = document.getElementById("calendar-tbody");
+
+        if (
+          !data ||
+          !data.MRData ||
+          !data.MRData.RaceTable ||
+          !data.MRData.RaceTable.Races
+        ) {
+          loadingContainer.innerHTML = `
+            <div class="alert alert-warning">
+              <p><strong>Data structure issue:</strong> The API response doesn't contain the expected race data.</p>
+              <p>Received: ${JSON.stringify(data).substring(0, 200)}...</p>
+            </div>`;
+          return;
+        }
+
+        const races = data.MRData.RaceTable.Races || [];
+
+        if (races.length > 0) {
+          races.forEach((race) => {
+            const raceDate = new Date(race.date);
+            const today = new Date();
+
+            // Determine race status
+            let status = "";
+            let statusClass = "";
+
+            if (raceDate < today) {
+              status = "Completed";
+              statusClass = "bg-secondary";
+            } else if (raceDate.toDateString() === today.toDateString()) {
+              status = "Today";
+              statusClass = "bg-danger";
+            } else {
+              status = "Upcoming";
+              statusClass = "bg-success";
+            }
+
+            const tr = document.createElement("tr");
+
+            tr.innerHTML = `
+                        <td>${race.round}</td>
+                        <td>
+                            <a href="/race/${race.season}/${race.round}">
+                                ${race.raceName}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/circuit/${race.Circuit.circuitId}">
+                                ${race.Circuit.circuitName}
+                            </a>
+                            <small class="d-block text-muted">${
+                              race.Circuit.Location.locality
+                            }, ${race.Circuit.Location.country}</small>
+                        </td>
+                        <td>${new Date(race.date).toLocaleDateString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        })}</td>
+                        <td><span class="badge ${statusClass}">${status}</span></td>
+                    `;
+
+            tbody.appendChild(tr);
+          });
+
+          // Also create the circuit cards
+          createCircuitCards(races);
+
+          // Hide loading, show table
+          loadingContainer.classList.add("d-none");
+          calendarContainer.classList.remove("d-none");
+        } else {
+          // If no data, show message
+          loadingContainer.innerHTML =
+            "<p>No race calendar available at this time.</p>";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching race calendar:", error);
+        const loadingContainer = document.querySelector(
+          "#race-calendar .loading-container"
+        );
+        loadingContainer.innerHTML =
+          "<p>Error loading race calendar. Please try again later.</p>";
+      });
+
+    // Fetch next race
+    fetch("/api/next-race")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        logData("Next Race Data", data);
+
+        const nextRaceContainer = document.getElementById("next-race");
+
+        if (
+          !data ||
+          !data.MRData ||
+          !data.MRData.RaceTable ||
+          !data.MRData.RaceTable.Races
+        ) {
+          nextRaceContainer.innerHTML = `
+            <div class="alert alert-warning">
+              <p><strong>Data structure issue:</strong> The API response doesn't contain the expected next race data.</p>
+              <p>Received: ${JSON.stringify(data).substring(0, 200)}...</p>
+            </div>`;
+          return;
+        }
+
+        const races = data.MRData.RaceTable.Races || [];
+
+        if (races.length > 0) {
+          const race = races[0];
+          const raceDate = new Date(
+            race.date + "T" + (race.time || "00:00:00Z")
+          );
+          const now = new Date();
+          const diffTime = Math.abs(raceDate - now);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          nextRaceContainer.innerHTML = `
+                    <h3 class="card-title mb-3">${race.raceName}</h3>
+                    <p class="mb-1"><strong>Round ${
+                      race.round
+                    }</strong> of the ${race.season} season</p>
+                    <p class="mb-3"><strong>Date:</strong> ${new Date(
+                      race.date
+                    ).toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}</p>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <img src="/static/images/circuit-placeholder.jpg" alt="${
+                              race.Circuit.circuitName
+                            }" class="img-fluid rounded" style="max-width: 120px;">
+                        </div>
+                        <div>
+                            <p class="mb-1"><strong>${
+                              race.Circuit.circuitName
+                            }</strong></p>
+                            <p class="mb-0">${
+                              race.Circuit.Location.locality
+                            }, ${race.Circuit.Location.country}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="countdown mt-3 text-center">
+                        <span class="badge bg-danger fs-6 py-2 px-3">${diffDays} days to go</span>
+                    </div>
+                    
+                    <div class="mt-3 text-center">
+                        <a href="/race/${race.season}/${
+            race.round
+          }" class="btn btn-primary">Race Details</a>
+                    </div>
+                `;
+        } else {
+          nextRaceContainer.innerHTML = "<p>No upcoming races found.</p>";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching next race:", error);
+        const nextRaceContainer = document.getElementById("next-race");
+        nextRaceContainer.innerHTML =
+          "<p>Error loading next race information. Please try again later.</p>";
+      });
+
+    function createCircuitCards(races) {
+      const circuitCards = document.getElementById("circuit-cards");
+
+      // Clear existing content
+      circuitCards.innerHTML = "";
+
+      // Use a Set to track unique circuits (in case of double-headers)
+      const processedCircuits = new Set();
+
+      races.forEach((race) => {
+        const circuitId = race.Circuit.circuitId;
+
+        // Skip if we've already processed this circuit
+        if (processedCircuits.has(circuitId)) return;
+
+        processedCircuits.add(circuitId);
+
+        const circuitCol = document.createElement("div");
+        circuitCol.className = "col-md-4 col-sm-6 mb-4";
+
+        circuitCol.innerHTML = `
+                <div class="card h-100">
+                    <img src="/static/images/circuit-placeholder.jpg" class="card-img-top" alt="${race.Circuit.circuitName}">
+                    <div class="card-body">
+                        <h5 class="card-title">${race.Circuit.circuitName}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            ${race.Circuit.Location.locality}, ${race.Circuit.Location.country}
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">Featured in the ${race.raceName}</small>
+                        </p>
+                        <a href="/circuit/${circuitId}" class="btn btn-sm btn-outline-primary">Circuit Details</a>
+                    </div>
+                </div>
+            `;
+
+        circuitCards.appendChild(circuitCol);
+      });
+    }
+  });
+</script>
+{% endblock %}

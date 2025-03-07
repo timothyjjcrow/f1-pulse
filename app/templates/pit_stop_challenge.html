@@ -1,0 +1,176 @@
+{% extends 'base.html' %} {% block title %}Virtual Pit Stop Challenge - F1
+Pulse{% endblock %} {% block content %}
+<div class="pit-stop-challenge" id="pit-stop-challenge-container">
+  <div class="text-center mb-4">
+    <h1 class="display-5 fw-bold">Virtual Pit Stop Challenge</h1>
+    <p class="lead">
+      Test your strategic skills! Choose tires and make pit stop decisions like
+      a real F1 team principal.
+    </p>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0">Race Situation</h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h4>Current Conditions</h4>
+          <ul class="list-group mb-3">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              Circuit
+              <span>Monaco Grand Prix, Monte Carlo</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              Weather
+              <span>Dry, 25°C</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              Race Progress
+              <span>Lap 30 of 78</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              Your Position
+              <span>5th</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              Current Tire
+              <span>Medium (25 laps old)</span>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h4>Race Analysis</h4>
+          <p>
+            Your tires are showing significant wear after 25 laps, and your lap
+            times are starting to drop. You're in 5th position, with P4 about 4
+            seconds ahead and P6 about 3 seconds behind.
+          </p>
+          <p>
+            Track position is crucial at Monaco, but tire degradation could cost
+            you more time if you stay out too long.
+          </p>
+          <p>
+            For Monaco, the 2025 regulations require a two-compound strategy.
+            You must use two different tire compounds during the race.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Choose Your Tire Compound</h3>
+        </div>
+        <div class="card-body">
+          <p>Select the tire compound you want to use for your pit stop:</p>
+
+          <div class="tire-selection">
+            <div class="tire-option" data-tire="soft">
+              <img
+                src="{{ url_for('static', filename='images/soft-tire.png') }}"
+                alt="Soft Tire"
+              />
+              <h5 class="text-danger">Soft</h5>
+            </div>
+            <div class="tire-option" data-tire="medium">
+              <img
+                src="{{ url_for('static', filename='images/medium-tire.png') }}"
+                alt="Medium Tire"
+              />
+              <h5 class="text-warning">Medium</h5>
+            </div>
+            <div class="tire-option" data-tire="hard">
+              <img
+                src="{{ url_for('static', filename='images/hard-tire.png') }}"
+                alt="Hard Tire"
+              />
+              <h5 class="text-white bg-dark d-inline-block px-2 rounded">
+                Hard
+              </h5>
+            </div>
+          </div>
+
+          <div id="tire-strategy-info" class="mt-4 p-3 border rounded bg-light">
+            <p class="text-center text-muted">
+              Select a tire compound to see strategy information
+            </p>
+          </div>
+
+          <div class="text-center mt-4">
+            <button id="simulate-pit-stop" class="btn btn-primary btn-lg">
+              Simulate Pit Stop
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Pit Stop Result</h3>
+        </div>
+        <div class="card-body" id="pit-stop-result">
+          <div class="text-center py-5">
+            <p class="text-muted">
+              Simulation results will appear here after you select a tire
+              compound and click "Simulate Pit Stop"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Pit Stop Strategy Guide</h3>
+        </div>
+        <div class="card-body">
+          <h5>Factors to Consider:</h5>
+          <ul>
+            <li>
+              <strong>Track Position:</strong> At Monaco, overtaking is
+              extremely difficult, making track position crucial.
+            </li>
+            <li>
+              <strong>Tire Wear:</strong> Worn tires will drastically reduce
+              your lap time and increase the risk of being overtaken.
+            </li>
+            <li>
+              <strong>Pit Lane Time:</strong> A pit stop at Monaco typically
+              costs around 23-25 seconds of race time.
+            </li>
+            <li>
+              <strong>Traffic:</strong> Rejoining the race in traffic can cost
+              you valuable seconds, especially at narrow circuits.
+            </li>
+          </ul>
+          <p>
+            Remember that F1 strategy often involves balancing immediate pace
+            against long-term race positioning. Sometimes a short-term loss can
+            lead to a long-term gain!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  // Additional JavaScript for this page can go here if needed
+</script>
+{% endblock %}

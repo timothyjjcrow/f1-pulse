@@ -1,0 +1,473 @@
+{% extends 'base.html' %} {% block title %}F1 Standings - F1 Pulse{% endblock %}
+{% block content %}
+<div class="standings-page">
+  <div class="text-center mb-4">
+    <h1 class="display-5 fw-bold">F1 Championship Standings</h1>
+    <p class="lead">
+      Current championship standings for drivers and teams in the 2025 Formula 1
+      season
+    </p>
+  </div>
+
+  <ul class="nav nav-tabs mb-4" id="standingsTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active"
+        id="drivers-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#drivers-standings-tab"
+        type="button"
+        role="tab"
+        aria-controls="drivers-standings-tab"
+        aria-selected="true"
+      >
+        <i class="fas fa-user me-2"></i>Drivers Championship
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="constructors-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#constructors-standings-tab"
+        type="button"
+        role="tab"
+        aria-controls="constructors-standings-tab"
+        aria-selected="false"
+      >
+        <i class="fas fa-car me-2"></i>Constructors Championship
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="standingsTabContent">
+    <!-- Drivers Championship Tab -->
+    <div
+      class="tab-pane fade show active"
+      id="drivers-standings-tab"
+      role="tabpanel"
+      aria-labelledby="drivers-tab"
+    >
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Drivers Championship</h2>
+        </div>
+        <div class="card-body" id="drivers-standings">
+          <div class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading driver standings...</p>
+          </div>
+          <div class="table-responsive d-none" id="drivers-table-container">
+            <table class="table table-striped standings-table">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Driver</th>
+                  <th>Team</th>
+                  <th>Points</th>
+                  <th>Wins</th>
+                  <th>Podiums</th>
+                  <th>Previous Position</th>
+                  <th>Trend</th>
+                </tr>
+              </thead>
+              <tbody id="drivers-tbody">
+                <!-- Will be populated via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h3 class="mb-0">Points Visualization</h3>
+            </div>
+            <div class="card-body">
+              <div
+                class="chart-container"
+                style="position: relative; height: 400px"
+              >
+                <canvas id="driversChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Constructors Championship Tab -->
+    <div
+      class="tab-pane fade"
+      id="constructors-standings-tab"
+      role="tabpanel"
+      aria-labelledby="constructors-tab"
+    >
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Constructors Championship</h2>
+        </div>
+        <div class="card-body" id="constructors-standings">
+          <div class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading constructor standings...</p>
+          </div>
+          <div
+            class="table-responsive d-none"
+            id="constructors-table-container"
+          >
+            <table class="table table-striped standings-table">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Team</th>
+                  <th>Points</th>
+                  <th>Wins</th>
+                  <th>Previous Position</th>
+                  <th>Trend</th>
+                </tr>
+              </thead>
+              <tbody id="constructors-tbody">
+                <!-- Will be populated via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h3 class="mb-0">Points Visualization</h3>
+            </div>
+            <div class="card-body">
+              <div
+                class="chart-container"
+                style="position: relative; height: 400px"
+              >
+                <canvas id="constructorsChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Fetch driver standings
+    fetch("/api/drivers")
+      .then((response) => response.json())
+      .then((data) => {
+        const tableContainer = document.getElementById(
+          "drivers-table-container"
+        );
+        const loadingContainer = document.querySelector(
+          "#drivers-standings .loading-container"
+        );
+        const tbody = document.getElementById("drivers-tbody");
+
+        const standingsData =
+          data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
+
+        if (standingsData.length > 0) {
+          // Create array for chart
+          const chartLabels = [];
+          const chartData = [];
+          const chartColors = [];
+
+          standingsData.forEach((driver) => {
+            const tr = document.createElement("tr");
+
+            // Add driver to chart data
+            chartLabels.push(
+              `${driver.Driver.code || driver.Driver.familyName}`
+            );
+            chartData.push(parseFloat(driver.points));
+            chartColors.push(getRandomColor());
+
+            // Simulate previous position (in a real app, this would come from historical data)
+            const prevPosition = simulatePreviousPosition(
+              driver.position,
+              1,
+              standingsData.length
+            );
+
+            // Calculate trend
+            const trend = prevPosition - parseInt(driver.position);
+            let trendIcon = "";
+
+            if (trend > 0) {
+              trendIcon = '<i class="fas fa-arrow-up text-success"></i>';
+            } else if (trend < 0) {
+              trendIcon = '<i class="fas fa-arrow-down text-danger"></i>';
+            } else {
+              trendIcon = '<i class="fas fa-minus text-secondary"></i>';
+            }
+
+            tr.innerHTML = `
+                        <td class="position">${driver.position}</td>
+                        <td>
+                            <a href="/driver/${driver.Driver.driverId}">
+                                ${driver.Driver.givenName} ${
+              driver.Driver.familyName
+            }
+                            </a>
+                            <span class="badge ${
+                              driver.position <= 3
+                                ? "bg-warning text-dark"
+                                : "bg-secondary"
+                            }">
+                                ${
+                                  driver.Driver.code ||
+                                  driver.Driver.permanentNumber ||
+                                  ""
+                                }
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/team/${
+                              driver.Constructors[0].constructorId
+                            }">
+                                ${driver.Constructors[0].name}
+                            </a>
+                        </td>
+                        <td>${driver.points}</td>
+                        <td>${driver.wins}</td>
+                        <td>${Math.floor(Math.random() * 15 + 1)}</td>
+                        <td>${prevPosition}</td>
+                        <td>${trendIcon}</td>
+                    `;
+
+            tbody.appendChild(tr);
+          });
+
+          // Create chart
+          createChart(
+            "driversChart",
+            "Drivers Championship Points",
+            chartLabels,
+            chartData,
+            chartColors
+          );
+
+          // Hide loading, show table
+          loadingContainer.classList.add("d-none");
+          tableContainer.classList.remove("d-none");
+        } else {
+          // If no data, show message
+          loadingContainer.innerHTML =
+            "<p>No driver standings available at this time.</p>";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching driver standings:", error);
+        const loadingContainer = document.querySelector(
+          "#drivers-standings .loading-container"
+        );
+        loadingContainer.innerHTML =
+          "<p>Error loading driver standings. Please try again later.</p>";
+      });
+
+    // Fetch constructor standings
+    fetch("/api/teams")
+      .then((response) => response.json())
+      .then((data) => {
+        const tableContainer = document.getElementById(
+          "constructors-table-container"
+        );
+        const loadingContainer = document.querySelector(
+          "#constructors-standings .loading-container"
+        );
+        const tbody = document.getElementById("constructors-tbody");
+
+        const standingsData =
+          data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings ||
+          [];
+
+        if (standingsData.length > 0) {
+          // Create array for chart
+          const chartLabels = [];
+          const chartData = [];
+          const chartColors = [
+            "#0600EF", // Red Bull
+            "#DC0000", // Ferrari
+            "#00D2BE", // Mercedes
+            "#FF8700", // McLaren
+            "#006F62", // Aston Martin
+            "#0090FF", // Alpine
+            "#005AFF", // Williams
+            "#00329B", // Racing Bulls
+            "#52E252", // Stake
+            "#FFFFFF", // Haas
+          ];
+
+          standingsData.forEach((team, index) => {
+            const tr = document.createElement("tr");
+
+            // Add team to chart data
+            chartLabels.push(team.Constructor.name);
+            chartData.push(parseFloat(team.points));
+
+            // Simulate previous position (in a real app, this would come from historical data)
+            const prevPosition = simulatePreviousPosition(
+              team.position,
+              1,
+              standingsData.length
+            );
+
+            // Calculate trend
+            const trend = prevPosition - parseInt(team.position);
+            let trendIcon = "";
+
+            if (trend > 0) {
+              trendIcon = '<i class="fas fa-arrow-up text-success"></i>';
+            } else if (trend < 0) {
+              trendIcon = '<i class="fas fa-arrow-down text-danger"></i>';
+            } else {
+              trendIcon = '<i class="fas fa-minus text-secondary"></i>';
+            }
+
+            tr.innerHTML = `
+                        <td class="position">${team.position}</td>
+                        <td>
+                            <a href="/team/${team.Constructor.constructorId}">
+                                ${team.Constructor.name}
+                            </a>
+                        </td>
+                        <td>${team.points}</td>
+                        <td>${team.wins}</td>
+                        <td>${prevPosition}</td>
+                        <td>${trendIcon}</td>
+                    `;
+
+            tbody.appendChild(tr);
+          });
+
+          // Create chart
+          createChart(
+            "constructorsChart",
+            "Constructors Championship Points",
+            chartLabels,
+            chartData,
+            chartColors
+          );
+
+          // Hide loading, show table
+          loadingContainer.classList.add("d-none");
+          tableContainer.classList.remove("d-none");
+        } else {
+          // If no data, show message
+          loadingContainer.innerHTML =
+            "<p>No constructor standings available at this time.</p>";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching constructor standings:", error);
+        const loadingContainer = document.querySelector(
+          "#constructors-standings .loading-container"
+        );
+        loadingContainer.innerHTML =
+          "<p>Error loading constructor standings. Please try again later.</p>";
+      });
+
+    function simulatePreviousPosition(currentPos, min, max) {
+      // Simulate a previous position that's somewhat realistic
+      const range = Math.min(3, max);
+      let prev =
+        parseInt(currentPos) +
+        Math.floor(Math.random() * (2 * range + 1)) -
+        range;
+
+      // Ensure it's within bounds
+      prev = Math.max(min, Math.min(max, prev));
+
+      return prev;
+    }
+
+    function getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function createChart(canvasId, title, labels, data, colors) {
+      const ctx = document.getElementById(canvasId).getContext("2d");
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Points",
+              data: data,
+              backgroundColor: colors,
+              borderColor: colors.map((color) => darkenColor(color, 20)),
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: title,
+              font: {
+                size: 16,
+              },
+            },
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: "Points",
+              },
+            },
+          },
+        },
+      });
+    }
+
+    function darkenColor(color, percent) {
+      // Convert hex to RGB
+      let r = parseInt(color.substring(1, 3), 16);
+      let g = parseInt(color.substring(3, 5), 16);
+      let b = parseInt(color.substring(5, 7), 16);
+
+      // Darken
+      r = Math.max(0, Math.floor(r * (1 - percent / 100)));
+      g = Math.max(0, Math.floor(g * (1 - percent / 100)));
+      b = Math.max(0, Math.floor(b * (1 - percent / 100)));
+
+      // Convert back to hex
+      return `#${r
+        .toString(16)
+        .padStart(
+          2,
+          "0"
+        )}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+    }
+  });
+</script>
+{% endblock %}

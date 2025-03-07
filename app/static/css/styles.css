@@ -1,0 +1,254 @@
+/* F1 Pulse - Main Stylesheet */
+
+:root {
+  --f1-red: #e10600;
+  --f1-dark-red: #b00500;
+  --f1-black: #15151e;
+  --f1-dark-grey: #38383f;
+  --f1-light-grey: #f1f2f3;
+}
+
+body {
+  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+  background-color: #f8f9fa;
+}
+
+/* Override Bootstrap theme colors */
+.bg-primary {
+  background-color: var(--f1-red) !important;
+}
+
+.bg-dark {
+  background-color: var(--f1-black) !important;
+}
+
+.text-primary {
+  color: var(--f1-red) !important;
+}
+
+.btn-primary {
+  background-color: var(--f1-red);
+  border-color: var(--f1-red);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--f1-dark-red);
+  border-color: var(--f1-dark-red);
+}
+
+.btn-outline-primary {
+  color: var(--f1-red);
+  border-color: var(--f1-red);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background-color: var(--f1-red);
+  border-color: var(--f1-red);
+}
+
+/* Navbar styling */
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  font-weight: 500;
+}
+
+/* Hero section */
+.hero-section {
+  padding: 4rem 0;
+  background-image: linear-gradient(
+      rgba(21, 21, 30, 0.8),
+      rgba(21, 21, 30, 0.8)
+    ),
+    url("../images/hero-bg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+/* Section titles */
+.section-title {
+  font-weight: 700;
+  color: var(--f1-black);
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--f1-red);
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+/* Card styling */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--f1-black);
+  padding: 3rem 0;
+}
+
+.footer h5 {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.footer a {
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: var(--f1-red) !important;
+}
+
+/* Driver/Team cards */
+.driver-card,
+.team-card {
+  overflow: hidden;
+  position: relative;
+}
+
+.driver-card img,
+.team-card img {
+  transition: transform 0.5s ease;
+}
+
+.driver-card:hover img,
+.team-card:hover img {
+  transform: scale(1.05);
+}
+
+.team-logo {
+  max-height: 40px;
+  margin-right: 10px;
+}
+
+/* Race countdown */
+.countdown {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Circuit maps */
+.circuit-map img {
+  max-width: 100%;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+/* Standings tables */
+.standings-table th {
+  background-color: var(--f1-dark-grey);
+  color: white;
+}
+
+.standings-table .position {
+  font-weight: 700;
+  width: 40px;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-section {
+    text-align: center;
+  }
+
+  .section-title {
+    display: block;
+    text-align: center;
+  }
+}
+
+/* Pit Stop Challenge */
+.tire-selection {
+  display: flex;
+  justify-content: space-around;
+  margin: 2rem 0;
+}
+
+.tire-option {
+  text-align: center;
+  cursor: pointer;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.tire-option img {
+  max-width: 100px;
+  margin-bottom: 0.5rem;
+}
+
+.tire-option.selected {
+  background-color: rgba(225, 6, 0, 0.1);
+  border: 2px solid var(--f1-red);
+}
+
+/* Loading spinners */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  flex-direction: column;
+}
+
+/* Search results */
+.search-results-container {
+  margin-top: 2rem;
+}
+
+.search-result-item {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s ease;
+}
+
+.search-result-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Track interactive elements */
+.track-hotspot {
+  cursor: pointer;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: var(--f1-red);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.track-hotspot:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--f1-black);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 10;
+}
