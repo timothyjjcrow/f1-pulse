@@ -49,224 +49,517 @@
   .table-danger {
     background-color: rgba(205, 127, 50, 0.15) !important; /* Bronze for 3rd */
   }
+
+  /* New styles for charts */
+  .chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .stats-card {
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+
+  .season-stats {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .season-stats .card-header {
+    border-radius: 0;
+  }
+
+  .driver-helmet {
+    max-width: 120px;
+    max-height: 120px;
+    object-fit: contain;
+    margin-top: -60px;
+    border: 4px solid #fff;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .stat-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .stat-circle .value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  .stat-circle .label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+  }
+
+  .quick-stats {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+  }
+
+  .nav-tabs .nav-link.active {
+    font-weight: bold;
+    border-bottom: 3px solid #007bff;
+  }
+
+  .team-color-stripe {
+    height: 6px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 123, 255, 1) 0%,
+      rgba(0, 123, 255, 0.5) 100%
+    );
+    border-radius: 3px 3px 0 0;
+  }
+
+  .flag-image {
+    border: 1px solid #ddd;
+  }
+
+  /* New styles for enhanced components */
+  .race-status {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .status-finished {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .status-dnf {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .status-dns {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .status-dsq {
+    background-color: #000;
+    color: #fff;
+  }
+
+  .season-progress {
+    height: 5px;
+    border-radius: 5px;
+    width: 100%;
+    background-color: #e9ecef;
+  }
+
+  .progress-bar-completed {
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 5px;
+  }
+
+  .performance-indicator {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+
+  .performance-up {
+    background-color: #28a745;
+  }
+
+  .performance-same {
+    background-color: #6c757d;
+  }
+
+  .performance-down {
+    background-color: #dc3545;
+  }
+
+  .team-mate-card {
+    border-left: 5px solid #007bff;
+  }
+
+  .standings-position {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    margin-right: 10px;
+  }
+
+  .position-top3 {
+    background-color: #28a745;
+  }
+
+  .position-top10 {
+    background-color: #007bff;
+  }
+
+  .position-other {
+    background-color: #6c757d;
+  }
+
+  .race-detail-modal .modal-header {
+    background-color: #f8f9fa;
+  }
+
+  .stats-highlight {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff;
+  }
+
+  .career-milestone {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .career-milestone:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #007bff;
+  }
+
+  .career-milestone:after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 22px;
+    width: 2px;
+    height: calc(100% - 12px);
+    background-color: #dee2e6;
+  }
+
+  .career-milestone:last-child:after {
+    display: none;
+  }
+
+  .qualifying-battle-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .battle-score {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .driver-vs {
+    font-size: 1.2rem;
+    color: #6c757d;
+  }
 </style>
 {% endblock %} {% block content %}
-<div class="driver-detail-page">
-  <div class="loading-container text-center py-5" id="driver-loading">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <p class="mt-2">Loading driver information...</p>
-  </div>
-
-  <div class="alert alert-warning d-none" id="driver-not-found">
-    <h4 class="alert-heading">Driver Not Found</h4>
-    <p>Sorry, we couldn't find information for the requested driver.</p>
-    <a href="{{ url_for('main.drivers') }}" class="btn btn-primary"
-      >Back to Drivers</a
-    >
-  </div>
-
-  <div class="alert alert-danger d-none" id="driver-error">
-    <h4 class="alert-heading">Error Loading Driver Data</h4>
-    <p>Sorry, we encountered an error while loading driver information.</p>
-    <a href="{{ url_for('main.drivers') }}" class="btn btn-primary"
-      >Back to Drivers</a
-    >
-  </div>
-
-  <div class="driver-content d-none" id="driver-content">
-    <div class="mb-4 driver-header">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="{{ url_for('main.index') }}">Home</a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="{{ url_for('main.drivers') }}">Drivers</a>
-          </li>
-          <li
-            class="breadcrumb-item active"
-            aria-current="page"
-            id="driver-breadcrumb"
-          >
-            Driver Profile
-          </li>
-        </ol>
-      </nav>
-    </div>
-
-    <div class="row mb-5">
-      <div class="col-md-4 mb-4 mb-md-0">
-        <div class="card profile-card h-100">
-          <div class="card-header text-center" id="driver-number-header">
-            <span class="fs-4 fw-bold">#</span>
-          </div>
-          <div class="text-center p-3">
-            <img
-              src="{{ url_for('static', filename='images/driver-placeholder.jpg') }}"
-              alt="Driver"
-              id="driver-image"
-              class="img-fluid rounded driver-profile-image"
-            />
-            <img
-              src="{{ url_for('static', filename='images/flag-placeholder.png') }}"
-              alt="Flag"
-              id="driver-flag"
-              class="flag-image mt-2"
-              style="max-width: 40px"
-            />
-          </div>
-          <div class="card-body">
-            <h2 class="card-title text-center mb-3" id="driver-name">
-              Driver Name
-            </h2>
-            <div class="driver-info">
-              <ul class="list-group list-group-flush">
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>Team:</span>
-                  <span id="driver-team" class="fw-bold"></span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>Nationality:</span>
-                  <span id="driver-nationality"></span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>Date of Birth:</span>
-                  <span id="driver-dob"></span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>Championships:</span>
-                  <span id="driver-championships" class="fw-bold"></span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>Race Wins:</span>
-                  <span id="driver-wins" class="fw-bold"></span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>Podiums:</span>
-                  <span id="driver-podiums"></span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>Pole Positions:</span>
-                  <span id="driver-poles"></span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>Fastest Laps:</span>
-                  <span id="driver-fastest-laps"></span>
-                </li>
-                <li
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <span>First Race:</span>
-                  <span id="driver-first-race"></span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
+<div class="container py-4">
+  <div class="driver-hero mb-4" id="driver-header">
+    <div class="team-color-stripe" id="team-color-stripe"></div>
+    <div class="row align-items-center">
       <div class="col-md-8">
-        <div class="row mb-4">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header bg-primary text-white">
-                <h3 class="mb-0">Driver Biography</h3>
-              </div>
-              <div class="card-body">
-                <p id="driver-biography" class="mb-0"></p>
-              </div>
-            </div>
-          </div>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="{{ url_for('main.index') }}">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+              <a href="{{ url_for('main.drivers') }}">Drivers</a>
+            </li>
+            <li
+              class="breadcrumb-item active"
+              aria-current="page"
+              id="breadcrumb-driver-name"
+            >
+              Driver
+            </li>
+          </ol>
+        </nav>
+        <h1 class="display-4 fw-bold" id="header-driver-name">
+          Driver Profile
+        </h1>
+        <p class="lead" id="header-driver-team">Team</p>
+      </div>
+      <div class="col-md-4 text-end">
+        <div class="current-position">
+          <span class="fs-6">Current Position:</span>
+          <span class="display-6 fw-bold" id="current-position-display">-</span>
+          <span class="fs-6"
+            >(<span id="current-points-display">-</span> pts)</span
+          >
         </div>
-        <div class="row mb-4">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header bg-primary text-white">
-                <h3 class="mb-0">2024 Season Performance</h3>
-              </div>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                      <div class="card-body text-center">
-                        <h4 class="card-title">Championship Standing</h4>
-                        <div class="position-indicator mb-3">
-                          <span
-                            class="display-1 fw-bold"
-                            id="driver-position"
-                          ></span>
-                          <span class="text-muted">/ 20</span>
-                        </div>
-                        <p class="mb-0 fs-4" id="driver-points"></p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="card h-100">
-                      <div class="card-body">
-                        <h4 class="card-title">Season Results</h4>
-                        <div
-                          class="chart-container"
-                          style="position: relative; height: 200px"
-                        >
-                          <canvas id="seasonResultsChart"></canvas>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content in tabbed interface -->
+  <ul class="nav nav-tabs mb-4" id="driverDetailTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active"
+        id="profile-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#profile"
+        type="button"
+        role="tab"
+        aria-controls="profile"
+        aria-selected="true"
+      >
+        Profile
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="races-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#races"
+        type="button"
+        role="tab"
+        aria-controls="races"
+        aria-selected="false"
+      >
+        Races
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="stats-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#stats"
+        type="button"
+        role="tab"
+        aria-controls="stats"
+        aria-selected="false"
+      >
+        Statistics
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="standings-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#standings"
+        type="button"
+        role="tab"
+        aria-controls="standings"
+        aria-selected="false"
+      >
+        Standings
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="driverDetailTabsContent">
+    <!-- Profile Tab -->
+    <div
+      class="tab-pane fade show active"
+      id="profile"
+      role="tabpanel"
+      aria-labelledby="profile-tab"
+    >
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <div class="card profile-card h-100">
+            <div class="card-header text-center" id="driver-number-header">
+              <span class="fs-4 fw-bold">#</span>
             </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <div class="card">
+            <div class="text-center p-3">
+              <img
+                src="{{ url_for('static', filename='images/driver-placeholder.jpg') }}"
+                alt="Driver"
+                id="driver-image"
+                class="img-fluid rounded driver-profile-image"
+              />
+              <img
+                src="{{ url_for('static', filename='images/helmet-placeholder.jpg') }}"
+                alt="Helmet"
+                id="driver-helmet"
+                class="driver-helmet rounded-circle mt-3"
+              />
               <div
-                class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+                class="d-flex justify-content-center align-items-center mt-2"
               >
-                <h3 class="mb-0">Recent Races</h3>
-                <span
-                  class="badge bg-light text-dark rounded-pill"
-                  id="races-count"
-                  >0 races</span
-                >
+                <img
+                  src="{{ url_for('static', filename='images/flag-placeholder.png') }}"
+                  alt="Flag"
+                  id="driver-flag"
+                  class="flag-image"
+                  style="max-width: 30px; margin-right: 8px"
+                />
+                <span id="driver-nationality" class="fs-5">Nationality</span>
               </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-hover" id="recent-races-table">
-                    <thead>
-                      <tr>
-                        <th>Race</th>
-                        <th>Date</th>
-                        <th>Position</th>
-                        <th>Grid</th>
-                        <th>+/-</th>
-                        <th>Points</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody id="recent-races-body">
-                      <!-- Will be populated via JavaScript -->
-                    </tbody>
-                  </table>
+            </div>
+            <div class="card-body">
+              <h2 class="card-title text-center mb-3" id="driver-name">
+                Driver Name
+              </h2>
+              <div class="driver-info">
+                <ul class="list-group list-group-flush">
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Team:</span>
+                    <span id="driver-team" class="fw-bold"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Date of Birth:</span>
+                    <span id="driver-dob"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Age:</span>
+                    <span id="driver-age"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>First Race:</span>
+                    <span id="driver-first-race"></span>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>Championships:</span>
+                    <span id="driver-championships" class="fw-bold"></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header bg-primary text-white">
+                  <h3 class="mb-0">Driver Biography</h3>
+                </div>
+                <div class="card-body">
+                  <p id="driver-biography" class="mb-0"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Statistics -->
+          <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+              <div class="card stats-card text-center h-100">
+                <div class="card-body">
+                  <div class="stat-circle">
+                    <div class="value" id="stat-wins">-</div>
+                    <div class="label">Wins</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="card stats-card text-center h-100">
+                <div class="card-body">
+                  <div class="stat-circle">
+                    <div class="value" id="stat-podiums">-</div>
+                    <div class="label">Podiums</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="card stats-card text-center h-100">
+                <div class="card-body">
+                  <div class="stat-circle">
+                    <div class="value" id="stat-poles">-</div>
+                    <div class="label">Poles</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="card stats-card text-center h-100">
+                <div class="card-body">
+                  <div class="stat-circle">
+                    <div class="value" id="stat-fastest-laps">-</div>
+                    <div class="label">Fastest Laps</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Career Milestones -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header bg-primary text-white">
+                  <h3 class="mb-0">Career Milestones</h3>
+                </div>
+                <div class="card-body">
+                  <div id="career-milestones">
+                    <div class="d-flex justify-content-center">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team-mate Battle -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header bg-primary text-white">
+                  <h3 class="mb-0">Team-mate Battle</h3>
+                </div>
+                <div class="card-body">
+                  <div id="team-mate-battle">
+                    <div class="d-flex justify-content-center">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -275,33 +568,215 @@
       </div>
     </div>
 
-    <div class="row mb-5">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">Helmet and Car</h3>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6 mb-4 mb-md-0 text-center">
-                <h4>Helmet Design</h4>
-                <img
-                  src="{{ url_for('static', filename='images/helmet-placeholder.jpg') }}"
-                  alt="Helmet"
-                  id="driver-helmet"
-                  class="img-fluid rounded helmet-image mb-2"
-                />
-                <p class="text-muted">Unique design for the 2024 season</p>
+    <!-- Races Tab -->
+    <div
+      class="tab-pane fade"
+      id="races"
+      role="tabpanel"
+      aria-labelledby="races-tab"
+    >
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div
+              class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+            >
+              <h3 class="mb-0">Season Progress</h3>
+              <div>
+                <span id="season-completed-races">0</span>/<span
+                  id="season-total-races"
+                  >0</span
+                >
+                races completed
               </div>
-              <div class="col-md-8 text-center">
-                <h4>Team Car</h4>
-                <img
-                  src="{{ url_for('static', filename='images/car-placeholder.png') }}"
-                  alt="Team Car"
-                  class="img-fluid rounded mb-3"
-                  id="team-car"
-                />
-                <p class="text-muted" id="car-info">2024 Formula 1 car</p>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-12">
+                  <div class="season-progress">
+                    <div
+                      class="progress-bar-completed"
+                      id="season-progress-bar"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="card mb-3">
+                    <div class="card-body text-center">
+                      <h5>Average Finish</h5>
+                      <div class="stats-highlight" id="average-finish">-</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card mb-3">
+                    <div class="card-body text-center">
+                      <h5>DNF Rate</h5>
+                      <div class="stats-highlight" id="dnf-rate">-</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card mb-3">
+                    <div class="card-body text-center">
+                      <h5>Points per Race</h5>
+                      <div class="stats-highlight" id="points-per-race">-</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Races with Enhanced Detail -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h3 class="mb-0">Recent Races</h3>
+            </div>
+            <div class="card-body table-responsive">
+              <table class="table table-hover" id="recent-races-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Race</th>
+                    <th scope="col">Circuit</th>
+                    <th scope="col">Qualifying</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Points</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Details</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-races-table-body">
+                  <tr>
+                    <td colspan="8" class="text-center">
+                      Loading race data...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Tab -->
+    <div
+      class="tab-pane fade"
+      id="stats"
+      role="tabpanel"
+      aria-labelledby="stats-tab"
+    >
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+              <h3 class="mb-0">Performance Trends</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+              <h3 class="mb-0">Track Performance</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="trackPerformanceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Head-to-Head Rivalry -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div
+              class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+            >
+              <h3 class="mb-0">Rivalry Comparison</h3>
+              <div class="form-group mb-0">
+                <select class="form-control" id="rivalSelector">
+                  <option value="" disabled selected>Select Rival</option>
+                  <!-- Will be populated by JavaScript -->
+                </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="rivalry-stats" id="rivalryStats">
+                    <div class="alert alert-info">
+                      Select a rival driver to see head-to-head comparison
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Qualifying vs Race Performance -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h3 class="mb-0">Qualifying vs Race Performance</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="qualifyingVsRaceChart"></canvas>
+              </div>
+              <div class="mt-3">
+                <div class="card qualifying-battle-card">
+                  <div class="card-body">
+                    <div class="row align-items-center text-center">
+                      <div class="col-4">
+                        <h5>Positions Gained</h5>
+                        <div
+                          class="stats-highlight text-success"
+                          id="positions-gained"
+                        >
+                          -
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <h5>Positions Lost</h5>
+                        <div
+                          class="stats-highlight text-danger"
+                          id="positions-lost"
+                        >
+                          -
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <h5>No Change</h5>
+                        <div
+                          class="stats-highlight text-secondary"
+                          id="positions-same"
+                        >
+                          -
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -309,27 +784,58 @@
       </div>
     </div>
 
-    <!-- Social Media Links -->
-    <div class="row mb-5">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">Social Media</h3>
+    <!-- Standings Tab -->
+    <div
+      class="tab-pane fade"
+      id="standings"
+      role="tabpanel"
+      aria-labelledby="standings-tab"
+    >
+      <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+              <h3 class="mb-0">Driver Standings</h3>
+            </div>
+            <div class="card-body">
+              <div id="driver-standings">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="card-body text-center">
-            <div class="social-links">
-              <a href="#" class="btn btn-outline-dark mx-2"
-                ><i class="fab fa-twitter me-2"></i>Twitter</a
-              >
-              <a href="#" class="btn btn-outline-dark mx-2"
-                ><i class="fab fa-instagram me-2"></i>Instagram</a
-              >
-              <a href="#" class="btn btn-outline-dark mx-2"
-                ><i class="fab fa-facebook me-2"></i>Facebook</a
-              >
-              <a href="#" class="btn btn-outline-dark mx-2"
-                ><i class="fab fa-youtube me-2"></i>YouTube</a
-              >
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+              <h3 class="mb-0">Constructor Standings</h3>
+            </div>
+            <div class="card-body">
+              <div id="constructor-standings">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h3 class="mb-0">Points Progression</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="pointsProgressionChart"></canvas>
+              </div>
             </div>
           </div>
         </div>
@@ -337,554 +843,39 @@
     </div>
   </div>
 </div>
+
+<!-- Race Details Modal -->
+<div
+  class="modal fade race-detail-modal"
+  id="raceDetailsModal"
+  tabindex="-1"
+  aria-labelledby="raceDetailsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="raceDetailsModalLabel">Race Details</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body" id="race-details-content">
+        <!-- Content will be populated by JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %} {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Store UI element references centrally to avoid repetitive DOM lookups
-    const elements = {
-      loading: document.getElementById("driver-loading"),
-      content: document.getElementById("driver-content"),
-      notFound: document.getElementById("driver-not-found"),
-      error: document.getElementById("driver-error"),
-    };
-
-    // Helper function to show/hide UI elements
-    function updateUIState(showElements, hideElements) {
-      if (showElements && showElements.length) {
-        showElements.forEach((el) => el && el.classList.remove("d-none"));
-      }
-      if (hideElements && hideElements.length) {
-        hideElements.forEach((el) => el && el.classList.add("d-none"));
-      }
-    }
-
-    // Helper function to show error and hide loading
-    function showError() {
-      updateUIState([elements.error], [elements.loading, elements.content]);
-    }
-
-    // Helper function to show "not found" and hide loading
-    function showNotFound() {
-      updateUIState([elements.notFound], [elements.loading, elements.content]);
-    }
-
-    // Helper to safely update text content of elements
-    function updateTextContent(id, value) {
-      const element = document.getElementById(id);
-      if (element) {
-        element.textContent = value;
-      }
-    }
-
-    // Get driver ID from URL path (not from query parameters)
-    const pathParts = window.location.pathname.split("/");
-    const driverId = pathParts[pathParts.length - 1]; // Get the last part of the path
-
-    if (!driverId) {
-      showNotFound();
-      return;
-    }
-
-    // Get driver info from API
-    fetch(`/api/driver/${driverId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(
-            `Driver API responded with status: ${response.status}`
-          );
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Validate the data structure
-        if (
-          !data.MRData ||
-          !data.MRData.DriverTable ||
-          !data.MRData.DriverTable.Drivers
-        ) {
-          console.error("Invalid driver data structure", data);
-          showNotFound();
-          return;
-        }
-
-        const driverData = data.MRData.DriverTable.Drivers[0];
-
-        if (!driverData) {
-          showNotFound();
-          return;
-        }
-
-        // Fetch detailed driver statistics from our database
-        fetch(`/api/driver-stats/${driverId}`)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(
-                `Driver stats API responded with status: ${response.status}`
-              );
-            }
-            return response.json();
-          })
-          .then((driverStats) => {
-            try {
-              // Driver header info
-              updateTextContent(
-                "driver-name",
-                `${driverData.givenName} ${driverData.familyName}`
-              );
-
-              // Set flag image with fallback
-              const flagElement = document.getElementById("driver-flag");
-              if (flagElement) {
-                setFlagWithFallback(flagElement, driverData.nationality);
-              }
-
-              updateTextContent("driver-nationality", driverData.nationality);
-              updateTextContent("driver-code", driverData.code || "N/A");
-              updateTextContent(
-                "driver-number",
-                driverData.permanentNumber || "N/A"
-              );
-              updateTextContent(
-                "driver-dob",
-                new Date(driverData.dateOfBirth).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              );
-
-              // Basic driver details
-              updateTextContent(
-                "driver-team",
-                driverStats.team.name || "Unknown"
-              );
-              updateTextContent(
-                "driver-championships",
-                driverStats.career_stats.championships || "0"
-              );
-              updateTextContent(
-                "driver-wins",
-                driverStats.career_stats.race_wins || "0"
-              );
-              updateTextContent(
-                "driver-podiums",
-                driverStats.career_stats.podiums || "0"
-              );
-              updateTextContent(
-                "driver-poles",
-                driverStats.career_stats.pole_positions || "0"
-              );
-              updateTextContent(
-                "driver-fastest-laps",
-                driverStats.career_stats.fastest_laps || "0"
-              );
-              updateTextContent(
-                "driver-first-race",
-                driverStats.career_stats.first_race_year || "Unknown"
-              );
-
-              // Season standings
-              updateTextContent(
-                "driver-position",
-                driverStats.current_season.position || "N/A"
-              );
-              updateTextContent(
-                "driver-points",
-                `${driverStats.current_season.points || "0"} points`
-              );
-
-              // Biography
-              const bioElement = document.getElementById("driver-biography");
-              if (bioElement) {
-                const biography =
-                  driverStats.driver && driverStats.driver.biography
-                    ? driverStats.driver.biography
-                    : generateBiography(driverData);
-
-                bioElement.innerHTML = biography;
-              }
-
-              // Create chart with recent race results from real data
-              createResultsChart(driverStats.recent_races);
-
-              // Populate recent races table with real data
-              populateRecentRaces(driverStats.recent_races);
-
-              // Show content and hide loading
-              updateUIState([elements.content], [elements.loading]);
-            } catch (error) {
-              console.error("Error processing driver data:", error);
-              showError();
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching driver stats:", error);
-            showError();
-          });
-      })
-      .catch((error) => {
-        console.error("Error fetching driver info:", error);
-        showError();
-      });
-
-    function generateBiography(driverData) {
-      // Generate a biography if none exists in the database
-      const name = `${driverData.givenName} ${driverData.familyName}`;
-      const age =
-        new Date().getFullYear() -
-        new Date(driverData.dateOfBirth).getFullYear();
-
-      return `
-        <p>${name} is a ${driverData.nationality} racing driver currently competing in Formula 1. 
-        Born on ${new Date(driverData.dateOfBirth).toLocaleDateString()}, 
-        the ${age}-year-old has established himself as one of the sport's talented competitors.</p>
-        
-        <p>Throughout his career, ${
-          driverData.givenName
-        } has shown dedication and skill on the track, 
-        competing at the highest level of motorsport.</p>
-      `;
-    }
-
-    function createResultsChart(raceData) {
-      const ctx = document
-        .getElementById("seasonResultsChart")
-        .getContext("2d");
-
-      // Parse race results from real data if available
-      let labels = [];
-      let results = [];
-      let seasons = new Set(); // Track which seasons we have data for
-
-      if (
-        raceData &&
-        raceData.MRData &&
-        raceData.MRData.RaceTable &&
-        raceData.MRData.RaceTable.Races
-      ) {
-        const races = raceData.MRData.RaceTable.Races;
-
-        // Sort races by date to ensure they appear in chronological order
-        races.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-        races.forEach((race) => {
-          if (race.Results && race.Results.length > 0) {
-            // Add year to the label if it's available
-            const raceDate = new Date(race.date);
-            const year = raceDate.getFullYear();
-            seasons.add(year);
-
-            // Format label as "Circuit (Year)"
-            const shortName = race.raceName.replace(" Grand Prix", "");
-            labels.push(`${shortName} (${year})`);
-
-            // If position exists, use it, otherwise show as DNF (value 21)
-            const position = race.Results[0].position
-              ? parseInt(race.Results[0].position)
-              : 21;
-            results.push(position);
-          }
-        });
-      }
-
-      // Create a title that reflects the seasons displayed
-      let chartTitle = "Race Results";
-      if (seasons.size > 0) {
-        const seasonsArray = Array.from(seasons).sort();
-        chartTitle = `Race Results (${seasonsArray.join("-")})`;
-      }
-
-      // Create the chart
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Race Position",
-              data: results,
-              borderColor: "#E10600",
-              backgroundColor: "rgba(225, 6, 0, 0.1)",
-              pointBackgroundColor: "#E10600",
-              pointBorderColor: "#fff",
-              pointRadius: 5,
-              tension: 0.1,
-              fill: true,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: chartTitle,
-              font: {
-                size: 16,
-              },
-            },
-            legend: {
-              display: false,
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  const position = context.raw;
-                  if (position > 20) {
-                    return "DNF";
-                  } else {
-                    return `Position: ${position}`;
-                  }
-                },
-              },
-            },
-          },
-          scales: {
-            y: {
-              reverse: true,
-              min: 1,
-              max: 22,
-              ticks: {
-                stepSize: 1,
-                callback: function (value) {
-                  if (value <= 20) {
-                    return value;
-                  } else {
-                    return "DNF";
-                  }
-                },
-              },
-            },
-          },
-        },
-      });
-    }
-
-    function populateRecentRaces(raceData) {
-      const tbody = document.getElementById("recent-races-body");
-      tbody.innerHTML = ""; // Clear existing content
-
-      let recentRaces = [];
-
-      // Use real data if available
-      if (
-        raceData &&
-        raceData.MRData &&
-        raceData.MRData.RaceTable &&
-        raceData.MRData.RaceTable.Races
-      ) {
-        const races = raceData.MRData.RaceTable.Races;
-
-        // Sort races by date (most recent first)
-        races.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        // Take up to 8 most recent races (increased from 5)
-        const recentRacesData = races.slice(0, 8);
-
-        recentRacesData.forEach((race) => {
-          if (race.Results && race.Results.length > 0) {
-            const result = race.Results[0];
-            const raceDate = new Date(race.date);
-            const year = raceDate.getFullYear();
-            const formattedDate = raceDate.toLocaleDateString("en-US", {
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-            });
-
-            // Check if the race has a fastest lap
-            const hasFastestLap =
-              result.FastestLap && result.FastestLap.rank === "1";
-
-            // Determine finish status
-            const finished =
-              result.status === "Finished" || result.status.startsWith("+");
-
-            // Get position change from grid to finish
-            const gridPos = result.grid ? parseInt(result.grid) : null;
-            const finishPos = result.position
-              ? parseInt(result.position)
-              : null;
-            let positionChange = null;
-
-            if (gridPos && finishPos && gridPos !== 0) {
-              // 0 means pit start
-              positionChange = gridPos - finishPos;
-            }
-
-            recentRaces.push({
-              race: race.raceName,
-              circuit: race.Circuit.circuitName,
-              circuitId: race.Circuit.circuitId,
-              year: year,
-              round: race.round,
-              season: race.season,
-              date: formattedDate,
-              position: finishPos,
-              grid: gridPos,
-              status: result.status,
-              points: result.points ? parseFloat(result.points) : 0,
-              hasFastestLap: hasFastestLap,
-              finished: finished,
-              positionChange: positionChange,
-              lapTime: result.FastestLap ? result.FastestLap.Time.time : null,
-            });
-          }
-        });
-      }
-
-      // Update the race count badge
-      const racesCountElement = document.getElementById("races-count");
-      if (racesCountElement) {
-        racesCountElement.textContent = `${recentRaces.length} race${
-          recentRaces.length !== 1 ? "s" : ""
-        }`;
-      }
-
-      // Update the table header with the correct columns
-      const headerRow = document.querySelector("#recent-races-table thead tr");
-      if (headerRow) {
-        headerRow.innerHTML = `
-          <th>Race</th>
-          <th>Date</th>
-          <th>Position</th>
-          <th>Grid</th>
-          <th>+/-</th>
-          <th>Points</th>
-          <th>Status</th>
-        `;
-      }
-
-      if (recentRaces.length === 0) {
-        // If no race data, show a message
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="7" class="text-center">No recent races found for this driver.</td>`;
-        tbody.appendChild(tr);
-        return;
-      }
-
-      recentRaces.forEach((race) => {
-        const tr = document.createElement("tr");
-
-        // Style based on position
-        if (race.position === 1) {
-          tr.classList.add("table-warning"); // Gold for 1st
-        } else if (race.position === 2) {
-          tr.classList.add("table-light"); // Silver for 2nd
-        } else if (race.position === 3) {
-          tr.classList.add("table-danger"); // Bronze/Red for 3rd
-        }
-
-        // Create position change indicator
-        let positionChangeHTML = "-";
-        if (race.positionChange !== null) {
-          if (race.positionChange > 0) {
-            positionChangeHTML = `<span class="text-success">+${race.positionChange} <i class="fas fa-arrow-up"></i></span>`;
-          } else if (race.positionChange < 0) {
-            positionChangeHTML = `<span class="text-danger">${race.positionChange} <i class="fas fa-arrow-down"></i></span>`;
-          } else {
-            positionChangeHTML = `<span class="text-muted">0</span>`;
-          }
-        }
-
-        // Format position with fastest lap indicator
-        let positionHTML = race.position || "-";
-        if (race.hasFastestLap) {
-          let fastestLapTooltip = race.lapTime
-            ? `Fastest Lap: ${race.lapTime}`
-            : "Fastest Lap";
-          positionHTML += ` <i class="fas fa-stopwatch text-purple" data-bs-toggle="tooltip" title="${fastestLapTooltip}"></i>`;
-        }
-
-        // Status with formatting
-        let statusHTML = race.status;
-        if (!race.finished) {
-          statusHTML = `<span class="text-danger">${race.status}</span>`;
-        }
-
-        // Create race link for detailed view
-        const raceLink = `/race/${race.season}/${race.round}`;
-        const circuitLink = `/circuit/${race.circuitId}`;
-
-        tr.innerHTML = `
-            <td>
-              <a href="${raceLink}" class="race-link">
-                ${race.race.replace(" Grand Prix", "")}
-                <small class="d-block text-muted">
-                  <a href="${circuitLink}" class="circuit-link">${
-          race.circuit
-        }</a>
-                </small>
-              </a>
-            </td>
-            <td>${race.date}</td>
-            <td>${positionHTML}</td>
-            <td>${race.grid || "-"}</td>
-            <td>${positionChangeHTML}</td>
-            <td>${race.points}</td>
-            <td>${statusHTML}</td>
-        `;
-
-        tbody.appendChild(tr);
-      });
-
-      // Initialize tooltips
-      if (typeof bootstrap !== "undefined" && bootstrap.Tooltip) {
-        const tooltipTriggerList = [].slice.call(
-          document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        );
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-      }
-    }
-
-    function getPointsForPosition(position) {
-      // F1 points system
-      const pointsSystem = {
-        1: 25,
-        2: 18,
-        3: 15,
-        4: 12,
-        5: 10,
-        6: 8,
-        7: 6,
-        8: 4,
-        9: 2,
-        10: 1,
-      };
-
-      return pointsSystem[position] || 0;
-    }
-
-    // Add the flag helper function
-    function setFlagWithFallback(flagElement, nationality) {
-      if (!nationality) {
-        flagElement.src = "/static/images/flag-placeholder.png";
-        flagElement.alt = "Flag placeholder";
-        return;
-      }
-
-      // Create standardized flag filename from nationality
-      const flagName = nationality.toLowerCase().replace(/\s+/g, "-");
-      const flagSrc = `/static/images/flags/${flagName}.png`;
-
-      // Try to load the flag, fall back to placeholder if it fails
-      const img = new Image();
-      img.onload = function () {
-        flagElement.src = flagSrc;
-        flagElement.alt = `${nationality} flag`;
-      };
-      img.onerror = function () {
-        console.log(
-          `Flag not found for ${nationality} (${flagSrc}), using placeholder`
-        );
-        flagElement.src = "/static/images/flag-placeholder.png";
-        flagElement.alt = `${nationality} flag (placeholder)`;
-      };
-      img.src = flagSrc;
-    }
-  });
-</script>
+<script src="{{ url_for('static', filename='js/driver_detail.js') }}"></script>
 {% endblock %}
